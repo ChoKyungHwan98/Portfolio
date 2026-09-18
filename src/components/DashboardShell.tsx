@@ -124,7 +124,7 @@ export const DashboardShell = ({
           </div>
         </header>
 
-        <main className={`dashboard-content dashboard-view-${currentView}`}>{children}</main>
+        <main className={`dashboard-content dashboard-view-${currentView} ${currentView === 'cover-letter' || currentView === 'resume' ? 'dashboard-view-resume' : ''}`}>{children}</main>
       </div>
     </div>
   );
