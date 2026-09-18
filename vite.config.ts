@@ -8,7 +8,7 @@ export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   const isProduction = mode === 'production';
   return {
-    base: '/pf-epid/',
+    base: '/Portfolio/',
     plugins: [
       react(), 
       tailwindcss(),

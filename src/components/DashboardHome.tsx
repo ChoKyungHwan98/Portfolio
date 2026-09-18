@@ -1,51 +1,88 @@
 import React from 'react';
 import type { DashboardView } from './DashboardShell';
 import { motion } from 'motion/react';
-import { ArrowRight, Terminal, Gamepad2, Settings2, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BriefcaseBusiness, FileText, Gamepad2, Tv } from 'lucide-react';
 
 interface DashboardHomeProps {
   onViewChange: (view: DashboardView) => void;
 }
 
+const QUICK_LINKS: {
+  id: DashboardView;
+  label: string;
+  desc: string;
+  icon: React.ReactNode;
+}[] = [
+  {
+    id: 'resume',
+    label: '이력 및 자기소개',
+    desc: '경력 · 학력 · 자기소개서',
+    icon: <FileText className="w-5 h-5" />,
+  },
+  {
+    id: 'portfolio',
+    label: '포트폴리오',
+    desc: '기획 산출물과 개발 프로젝트',
+    icon: <BriefcaseBusiness className="w-5 h-5" />,
+  },
+  {
+    id: 'game-history',
+    label: '게임 플레이 이력',
+    desc: '게임 플레이 인사이트',
+    icon: <Gamepad2 className="w-5 h-5" />,
+  },
+  {
+    id: 'anime-history',
+    label: '애니메이션 시청 이력',
+    desc: '서브컬처 인사이트',
+    icon: <Tv className="w-5 h-5" />,
+  },
+];
+
 export const DashboardHome = ({ onViewChange }: DashboardHomeProps) => {
   return (
     <section className="dashboard-home relative overflow-hidden !justify-start lg:!justify-center w-full min-h-[calc(100vh-116px)]">
-      {/* Removed ambient glows per user request to keep background clean */}
-      <div className="w-full max-w-[1280px] ml-[-68px] grid grid-cols-2 gap-16 items-center relative z-10 pl-0">
-        
+      <div className="w-full max-w-[1240px] grid grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] gap-20 items-center relative z-10">
+
         {/* Left Side: Copy */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
           className="flex flex-col items-start w-full"
         >
-          <h1 className="text-left m-0 mb-10 font-black tracking-tighter leading-[1.15] text-white">
-            <div className="flex flex-col gap-7">
-              <div className="flex items-baseline gap-4">
-                <span className="text-[#e07070] font-black text-9xl drop-shadow-[0_0_24px_rgba(224,112,112,0.35)]">−</span>
-                <span className="text-[#a1a1aa] font-extrabold text-8xl pr-5">를</span>
-                <span className="text-gray-400 font-black text-9xl drop-shadow-[0_0_20px_rgba(156,163,175,0.3)]">0</span>
-                <span className="text-[#a1a1aa] font-extrabold text-8xl">으로,</span>
+          <span className="mb-8 inline-flex items-center gap-2.5 text-[#a1a1aa] text-[14px] font-bold tracking-tight">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#e07070]" />
+            게임 기획자 지원자 · 조경환
+          </span>
+
+          <h1 className="text-left m-0 mb-9 font-black tracking-tighter leading-[1.15] text-white">
+            <div className="flex flex-col gap-5">
+              <div className="flex items-baseline gap-3.5">
+                <span className="text-[#e07070] font-black text-8xl drop-shadow-[0_0_24px_rgba(224,112,112,0.35)]">−</span>
+                <span className="text-[#a1a1aa] font-extrabold text-7xl pr-4">를</span>
+                <span className="text-gray-400 font-black text-8xl drop-shadow-[0_0_20px_rgba(156,163,175,0.3)]">0</span>
+                <span className="text-[#a1a1aa] font-extrabold text-7xl">으로,</span>
               </div>
-              <div className="flex items-baseline gap-4">
-                <span className="text-gray-400 font-black text-9xl drop-shadow-[0_0_20px_rgba(156,163,175,0.3)]">0</span>
-                <span className="text-[#a1a1aa] font-extrabold text-8xl pr-5">을</span>
-                <span className="text-blue-500 font-black text-9xl drop-shadow-[0_0_20px_rgba(59,130,246,0.4)]">+</span>
-                <span className="text-[#a1a1aa] font-extrabold text-8xl">로.</span>
+              <div className="flex items-baseline gap-3.5">
+                <span className="text-gray-400 font-black text-8xl drop-shadow-[0_0_20px_rgba(156,163,175,0.3)]">0</span>
+                <span className="text-[#a1a1aa] font-extrabold text-7xl pr-4">을</span>
+                <span className="text-blue-500 font-black text-8xl drop-shadow-[0_0_20px_rgba(59,130,246,0.4)]">+</span>
+                <span className="text-[#a1a1aa] font-extrabold text-7xl">로.</span>
               </div>
             </div>
           </h1>
 
-          <p className="text-[#f4f3ee] text-4xl font-bold max-w-[800px] leading-[1.7] mb-12 tracking-tight opacity-90 drop-shadow-md">
-            누군가의 어려움을 외면하지 않고,<br className="block" />
-            누군가의 하루에 즐거움을 더하는 게임 기획자가 되고싶습니다.
+          <p className="text-[#f4f3ee] text-2xl font-bold max-w-[760px] leading-[1.7] mb-11 tracking-tight opacity-90 drop-shadow-md">
+            플레이어에게 주고 싶은 경험을 먼저 생각하고,<br className="block" />
+            그 경험이 실제 플레이로 이어지도록 시스템으로 구현하는<br className="block" />
+            게임 기획자가 되고 싶습니다.
           </p>
 
-          <div className="flex flex-row items-center gap-5 w-auto">
-            <button 
-              type="button" 
-              className="group relative px-10 py-5 bg-[#f4f3ee] text-[#15171b] font-black text-xl rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(244,243,238,0.15)] transition-all hover:scale-[1.03] hover:shadow-[0_0_40px_rgba(244,243,238,0.25)]"
+          <div className="flex flex-row items-center gap-4 w-auto">
+            <button
+              type="button"
+              className="group relative px-9 py-4.5 bg-[#f4f3ee] text-[#15171b] font-black text-lg rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(244,243,238,0.15)] transition-all hover:scale-[1.03] hover:shadow-[0_0_40px_rgba(244,243,238,0.25)]"
               onClick={() => onViewChange('resume')}
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
@@ -54,9 +91,9 @@ export const DashboardHome = ({ onViewChange }: DashboardHomeProps) => {
               <div className="absolute inset-0 bg-white translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-out" />
             </button>
 
-            <button 
-              type="button" 
-              className="px-10 py-5 border-[1.5px] border-[rgba(244,243,238,0.2)] text-[#d4d4d8] font-bold text-xl rounded-2xl hover:bg-[rgba(244,243,238,0.06)] hover:text-[#f4f3ee] hover:border-[rgba(244,243,238,0.3)] transition-all flex justify-center items-center"
+            <button
+              type="button"
+              className="px-9 py-4.5 border-[1.5px] border-[rgba(244,243,238,0.2)] text-[#d4d4d8] font-bold text-lg rounded-2xl hover:bg-[rgba(244,243,238,0.06)] hover:text-[#f4f3ee] hover:border-[rgba(244,243,238,0.3)] transition-all flex justify-center items-center"
               onClick={() => onViewChange('portfolio')}
             >
               포트폴리오
@@ -64,245 +101,44 @@ export const DashboardHome = ({ onViewChange }: DashboardHomeProps) => {
           </div>
         </motion.div>
 
-        {/* Right Side: Character Image (Skin 2 Spine Animation) */}
-        <motion.div 
-           initial={{ opacity: 0, x: 40 }}
-           animate={{ opacity: 1, x: 0 }}
-           transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-           className="hidden lg:flex flex-col relative items-center justify-center w-full min-h-[500px]"
+        {/* Right Side: Site Index */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
+          className="hidden lg:flex flex-col w-full"
         >
-           {/* Glow behind character */}
-           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] bg-gradient-to-tr from-[#d7cab3]/[0.08] to-white/[0.03] blur-[80px] rounded-full pointer-events-none" />
-           
-           <SpineCharacter />
+          <div className="flex items-center gap-3 mb-5 pl-1">
+            <span className="text-[12px] font-black tracking-[0.06em] text-[#71717a]">목차</span>
+            <span className="flex-1 h-px bg-[rgba(244,243,238,0.1)]" />
+          </div>
+
+          <div className="flex flex-col gap-3">
+            {QUICK_LINKS.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onViewChange(item.id)}
+                className="group flex items-center gap-4 w-full text-left px-5 py-4 rounded-2xl border border-[rgba(244,243,238,0.1)] bg-[rgba(244,243,238,0.03)] hover:bg-[rgba(244,243,238,0.07)] hover:border-[rgba(244,243,238,0.22)] transition-all"
+              >
+                <span className="flex items-center justify-center w-11 h-11 rounded-xl bg-[rgba(244,243,238,0.06)] border border-[rgba(244,243,238,0.08)] text-[#d4d4d8] group-hover:text-[#f4f3ee] transition-colors">
+                  {item.icon}
+                </span>
+                <span className="flex flex-col min-w-0">
+                  <span className="text-[#f4f3ee] font-extrabold text-base tracking-tight">{item.label}</span>
+                  <span className="text-[#8b8b93] text-[13px] font-semibold tracking-tight truncate">{item.desc}</span>
+                </span>
+                <ArrowUpRight className="ml-auto w-5 h-5 text-[#5a5a63] group-hover:text-[#f4f3ee] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-6 px-5 py-4 rounded-2xl border border-dashed border-[rgba(244,243,238,0.12)] text-[#8b8b93] text-[13px] font-semibold tracking-tight leading-relaxed">
+            문의 · 연락 <span className="text-[#d4d4d8] font-bold">ckh980624@gmail.com</span>
+          </div>
         </motion.div>
 
       </div>
     </section>
   );
 };
-
-const SpineCharacter = () => {
-  const CONTAINER_ID = 'xxionx-spine-container';
-  const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
-  const playerRef = React.useRef<any>(null);
-  const isInitializing = React.useRef(false); // 로딩 중 중복 실행 방지 플래그
-
-  React.useEffect(() => {
-    let playerInstance: any = null;
-    let isMounted = true;
-
-    function initSpine() {
-      const el = document.getElementById(CONTAINER_ID);
-      if (!el || !isMounted) return;
-      
-      if (playerRef.current || isInitializing.current) return;
-      isInitializing.current = true;
-
-      try {
-        // @ts-ignore
-        playerInstance = new (window as any).spine.SpinePlayer(CONTAINER_ID, {
-          skelUrl: "/pf-epid/spine/xXionxSkin2.skel.asset",
-          atlasUrl: "/pf-epid/spine/xXionxSkin2.atlas.asset",
-          animation: "Idle_1",
-          alpha: true,
-          backgroundColor: "#00000000",
-          showControls: false,
-          showLoading: false, // <-- Spine 자체 로딩 UI 끄기 (미묘한 로딩 제거)
-          premultipliedAlpha: true,
-          preserveDrawingBuffer: false,
-          success: (player: any) => {
-            if (!isMounted) {
-              player.dispose();
-              return;
-            }
-            playerRef.current = player;
-            isInitializing.current = false;
-            
-            const skins = player.skeleton?.data?.skins;
-            if (skins && skins.length > 1) {
-              const activeSkin = skins.find((s: any) => s.name !== 'default') || skins[0];
-              player.skeleton.setSkin(activeSkin);
-              player.skeleton.setSlotsToSetupPose();
-            }
-          },
-          error: (_player: any, msg: string) => {
-            if (!isMounted) return;
-            console.error("Spine error:", msg);
-            setErrorMsg(msg || "Unknown error in SpinePlayer callback");
-            isInitializing.current = false;
-          }
-        });
-      } catch (e: any) {
-        if (!isMounted) return;
-        console.error("Spine init error:", e);
-        setErrorMsg(e.message || String(e));
-        isInitializing.current = false;
-      }
-    }
-
-    if (!document.getElementById('spine-player-css')) {
-      const link = document.createElement('link');
-      link.id = 'spine-player-css';
-      link.rel = 'stylesheet';
-      link.href = '/pf-epid/spine/spine-player.css';
-      document.head.appendChild(link);
-    }
-
-    // Dynamic injection bypasses Vite's module pipeline
-    if ((window as any).spine?.SpinePlayer) {
-      initSpine();
-    } else if (!document.getElementById('spine-player-script')) {
-      const script = document.createElement('script');
-      script.id = 'spine-player-script';
-      script.src = '/pf-epid/spine/spine-player.js';
-      script.onload = initSpine;
-      script.onerror = () => { if (isMounted) setErrorMsg('spine-player.js 로드 실패'); };
-      document.head.appendChild(script);
-    } else {
-      const existingScript = document.getElementById('spine-player-script') as HTMLScriptElement;
-      if (existingScript.onload) {
-        const prev = existingScript.onload;
-        existingScript.onload = (e) => { (prev as any)(e); initSpine(); };
-      } else {
-        existingScript.addEventListener('load', initSpine, { once: true });
-      }
-    }
-
-    return () => {
-      isMounted = false;
-      isInitializing.current = false;
-      if (playerInstance?.dispose) playerInstance.dispose();
-      playerRef.current = null;
-    };
-  }, []);
-
-  if (errorMsg) {
-    return (
-      <div className="w-full max-w-[500px] p-6 bg-red-900/50 border border-red-500 rounded-xl relative z-10 text-white font-mono text-sm break-all">
-        <h3 className="font-bold text-red-300 mb-2">Spine Load Error</h3>
-        {errorMsg}
-      </div>
-    );
-  }
-
-  const HIT_TEXTS = ["꿀밤! 💥"];
-  const [isHovered, setIsHovered] = React.useState(false);
-  const [hitEffects, setHitEffects] = React.useState<{ id: number; x: number; y: number; text: string }[]>([]);
-  const [hitCount, setHitCount] = React.useState(0);
-
-  const handleCharacterClick = (e?: React.MouseEvent<HTMLDivElement>) => {
-    if (playerRef.current?.animationState && playerRef.current?.skeleton) {
-      try {
-        const animState = playerRef.current.animationState;
-        const skeleton = playerRef.current.skeleton;
-
-        animState.clearTracks();
-        skeleton.setToSetupPose();
-        animState.setAnimation(0, 'Smash_End_1', false);
-        animState.addAnimation(0, 'Idle_1', true, 0);
-      } catch (err: any) {
-        console.error("Spine click error:", err);
-      }
-    }
-
-    // Spawn floating hit FX
-    let clickX = 90;
-    let clickY = 40;
-    if (e) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      clickX = e.clientX - rect.left;
-      clickY = e.clientY - rect.top;
-    }
-
-    const randomText = HIT_TEXTS[Math.floor(Math.random() * HIT_TEXTS.length)];
-    const newHit = {
-      id: Date.now() + Math.random(),
-      x: clickX,
-      y: clickY,
-      text: randomText,
-    };
-
-    setHitCount((prev) => prev + 1);
-    setHitEffects((prev) => [...prev.slice(-4), newHit]);
-  };
-
-  React.useEffect(() => {
-    if (hitEffects.length > 0) {
-      const timer = setTimeout(() => {
-        setHitEffects((prev) => prev.slice(1));
-      }, 900);
-      return () => clearTimeout(timer);
-    }
-  }, [hitEffects]);
-
-  return (
-    <div 
-      className="w-full max-w-[900px] h-[75vh] min-h-[700px] relative z-10 scale-[1.25] origin-center translate-y-16 group"
-    >
-      {/* Floating Click Indicator Badge (Dashboard Tone & Manner Matched) */}
-      <div 
-        className="absolute z-40 pointer-events-none select-none transition-all duration-300"
-        style={{ 
-          top: '7%', 
-          left: '30%',
-          transform: isHovered ? 'translateY(-4px) scale(1.05)' : 'translateY(0px) scale(1)',
-        }}
-      >
-        <div className="relative flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#16191e]/90 border border-[rgba(244,243,238,0.14)] text-[#f4f3ee] shadow-[0_12px_28px_rgba(0,0,0,0.45)] backdrop-blur-md animate-bounce">
-          <span className="text-base animate-pulse">👇</span>
-          <span className="text-xs font-bold tracking-tight text-[#f4f3ee]">
-            머리 콕! <span className="text-[#e07070] font-extrabold">(꿀밤 때리기)</span>
-          </span>
-          {hitCount > 0 && (
-            <span className="ml-0.5 px-2 py-0.5 text-[11px] font-mono font-black rounded-full bg-[#e07070]/20 border border-[#e07070]/40 text-[#e07070]">
-              x{hitCount}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Original Click Target Zone (Exact original hit box, untouched dimensions) */}
-      <div 
-        className="absolute z-50 cursor-pointer rounded-full" 
-        style={{ 
-          background: 'rgba(0,0,0,0.01)', 
-          pointerEvents: 'auto',
-          width: '200px',
-          height: '150px',
-          top: '15%',
-          left: '20%',
-          transform: 'none'
-        }} 
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={(e) => handleCharacterClick(e)}
-      >
-        {/* Dynamic Floating Hit Text FX (Tone & Manner Matched) */}
-        {hitEffects.map((hit) => (
-          <motion.div
-            key={hit.id}
-            initial={{ opacity: 1, y: 0, scale: 0.85 }}
-            animate={{ opacity: 0, y: -40, scale: 1.15 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="absolute pointer-events-none font-black text-xs text-[#f4f3ee] bg-[#16191e]/95 border border-[#e07070]/50 px-3 py-1 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.5)] backdrop-blur-md whitespace-nowrap z-50 flex items-center gap-1.5"
-            style={{ left: hit.x - 15, top: hit.y - 25 }}
-          >
-            <span className="text-[#f4f3ee] font-extrabold">{hit.text}</span>
-          </motion.div>
-        ))}
-      </div>
-
-      <div
-        id={CONTAINER_ID}
-        className="w-full h-full relative pointer-events-none"
-        style={{ background: 'transparent' }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center -z-10">
-          <div className="w-8 h-8 border-4 border-[#d7cab3]/30 border-t-[#d7cab3] rounded-full animate-spin" />
-        </div>
-      </div>
-    </div>
-  );
-};
-

@@ -43,7 +43,7 @@ export const DashboardShell = ({
   const bodyRef = React.useRef<HTMLDivElement>(null);
   const isSidebarExpanded = sidebarOverride?.view === currentView
     ? sidebarOverride.expanded
-    : currentView === 'home';
+    : false;
   const previousSidebarExpandedRef = React.useRef(isSidebarExpanded);
 
   React.useLayoutEffect(() => {
