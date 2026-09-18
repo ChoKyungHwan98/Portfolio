@@ -2,7 +2,7 @@ import type { ResumeData } from '../types';
 
 export const RESUME_DATA: ResumeData = {
   name: "조경환",
-  image: "./images/profile-2026.jpg",
+  image: "./images/profile-web.webp",
   role: "게임 기획자 지망생",
   email: "ckh980624@gmail.com",
   phone: "010-4826-6256",

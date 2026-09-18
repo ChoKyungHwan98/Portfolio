@@ -487,23 +487,27 @@ body:has(.resume-dashboard-layout.is-resume) {
   position: relative;
   z-index: 1;
   width: 100%;
-  flex: 1 1 96px;
-  min-height: 88px;
-  max-height: 128px;
+  aspect-ratio: 16 / 9;
+  min-height: unset;
+  max-height: none;
+  flex: none;
   margin: 10px 0 9px;
   overflow: hidden;
   border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 4px;
-  background: #f8fafc;
+  border-radius: 6px;
+  background: #12151a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dashboard-view-resume .resume-experience-thumb img {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
-  object-position: center 42%;
-  filter: saturate(0.95) contrast(0.98);
+  object-fit: contain;
+  object-position: center;
+  filter: saturate(0.98) contrast(1);
   transition: transform 0.2s ease, filter 0.2s ease;
 }
 
@@ -876,8 +880,9 @@ body:has(.resume-dashboard-layout.is-resume) {
   }
 
   .dashboard-view-resume .resume-experience-thumb {
-    min-height: 74px;
-    max-height: 104px;
+    aspect-ratio: 16 / 9;
+    min-height: unset;
+    max-height: none;
     margin-top: 8px;
     margin-bottom: 8px;
   }
@@ -1046,8 +1051,9 @@ body:has(.resume-dashboard-layout.is-resume) {
   }
 
   .dashboard-view-resume .resume-experience-thumb {
-    min-height: 54px;
-    max-height: 82px;
+    aspect-ratio: 16 / 9;
+    min-height: unset;
+    max-height: none;
     margin-top: 6px;
     margin-bottom: 7px;
   }
