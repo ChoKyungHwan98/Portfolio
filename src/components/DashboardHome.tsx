@@ -1,7 +1,7 @@
 import React from 'react';
 import type { DashboardView } from './DashboardShell';
 import { motion } from 'motion/react';
-import { ArrowRight, ArrowUpRight, BriefcaseBusiness, FileText, Gamepad2, Tv } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BriefcaseBusiness, Check, Copy, FileText, Gamepad2, Tv } from 'lucide-react';
 
 interface DashboardHomeProps {
   onViewChange: (view: DashboardView) => void;
@@ -40,6 +40,16 @@ const QUICK_LINKS: {
 ];
 
 export const DashboardHome = ({ onViewChange }: DashboardHomeProps) => {
+  const [copiedKey, setCopiedKey] = React.useState<'email' | 'phone' | null>(null);
+
+  const handleCopy = (text: string, key: 'email' | 'phone') => {
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => {
+      setCopiedKey((curr) => (curr === key ? null : curr));
+    }, 1800);
+  };
+
   return (
     <section className="dashboard-home relative overflow-hidden !justify-start lg:!justify-center w-full min-h-[calc(100vh-116px)]">
       <div className="w-full max-w-[1240px] grid grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] gap-20 items-center relative z-10">
@@ -135,9 +145,33 @@ export const DashboardHome = ({ onViewChange }: DashboardHomeProps) => {
 
           <div className="mt-6 px-5 py-4 rounded-2xl border border-dashed border-[rgba(244,243,238,0.12)] text-[#8b8b93] text-[13px] font-semibold tracking-tight leading-relaxed flex flex-wrap items-center gap-x-2 gap-y-1">
             <span>문의 · 연락</span>
-            <a href="mailto:ckh980624@gmail.com" className="text-[#d4d4d8] font-bold hover:text-white transition-colors">ckh980624@gmail.com</a>
+            <button
+              type="button"
+              onClick={() => handleCopy('ckh980624@gmail.com', 'email')}
+              className="inline-flex items-center gap-1.5 text-[#d4d4d8] font-bold hover:text-white transition-colors cursor-pointer"
+              title="클릭하여 이메일 복사"
+            >
+              <span>{copiedKey === 'email' ? '복사됨!' : 'ckh980624@gmail.com'}</span>
+              {copiedKey === 'email' ? (
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+              ) : (
+                <Copy className="w-3 h-3 text-[#71717a] hover:text-[#d4d4d8] transition-colors" />
+              )}
+            </button>
             <span className="text-[#525d6a]">·</span>
-            <a href="tel:010-4826-6256" className="text-[#d4d4d8] font-bold hover:text-white transition-colors">010-4826-6256</a>
+            <button
+              type="button"
+              onClick={() => handleCopy('010-4826-6256', 'phone')}
+              className="inline-flex items-center gap-1.5 text-[#d4d4d8] font-bold hover:text-white transition-colors cursor-pointer"
+              title="클릭하여 전화번호 복사"
+            >
+              <span>{copiedKey === 'phone' ? '복사됨!' : '010-4826-6256'}</span>
+              {copiedKey === 'phone' ? (
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+              ) : (
+                <Copy className="w-3 h-3 text-[#71717a] hover:text-[#d4d4d8] transition-colors" />
+              )}
+            </button>
           </div>
         </motion.div>
 
