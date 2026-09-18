@@ -1,7 +1,7 @@
 import React from 'react';
 import type { DashboardView } from './DashboardShell';
 import { motion } from 'motion/react';
-import { ArrowRight, ArrowUpRight, BriefcaseBusiness, Check, Copy, FileText, Gamepad2, Tv } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BriefcaseBusiness, Check, Copy, FileUser, Gamepad2, ScrollText, Tv } from 'lucide-react';
 
 interface DashboardHomeProps {
   onViewChange: (view: DashboardView) => void;
@@ -15,9 +15,15 @@ const QUICK_LINKS: {
 }[] = [
   {
     id: 'resume',
-    label: '이력 및 자기소개',
-    desc: '경력 · 학력 · 자기소개서',
-    icon: <FileText className="w-5 h-5" />,
+    label: '이력서',
+    desc: '학력 · 경력 · 자격증 · 툴 활용',
+    icon: <FileUser className="w-5 h-5" />,
+  },
+  {
+    id: 'cover-letter',
+    label: '자기소개서',
+    desc: '지원 동기 및 기획 철학',
+    icon: <ScrollText className="w-5 h-5" />,
   },
   {
     id: 'portfolio',

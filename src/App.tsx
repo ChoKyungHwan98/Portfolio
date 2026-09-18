@@ -12,7 +12,8 @@ import { useIsMobile } from './hooks/useIsMobile';
 import { PROJECTS, RESUME_DATA } from './data';
 
 const normalizeView = (value: string | null): DashboardView => {
-  if (value === 'resume' || value === 'cover-letter') return 'resume';
+  if (value === 'cover-letter') return 'cover-letter';
+  if (value === 'resume') return 'resume';
   if (value === 'portfolio') return 'portfolio';
   if (value === 'game-history' || value === 'play') return 'game-history';
   if (value === 'anime-history' || value === 'anime') return 'anime-history';
@@ -31,11 +32,6 @@ function App() {
     if (typeof window === 'undefined') return 'home';
     const params = new URLSearchParams(window.location.search);
     return normalizeView(params.get('view'));
-  });
-  const [resumeTab, setResumeTab] = useState<'resume' | 'cover-letter'>(() => {
-    if (typeof window === 'undefined') return 'resume';
-    const params = new URLSearchParams(window.location.search);
-    return params.get('view') === 'cover-letter' ? 'cover-letter' : 'resume';
   });
   const [initialProjectId, setInitialProjectId] = useState<number | null>(() => {
     if (typeof window === 'undefined') return null;
@@ -68,7 +64,6 @@ function App() {
       const nextView = normalizeView(params.get('view'));
       const nextProjectId = nextView === 'portfolio' ? getProjectIdParam(params) : null;
       setView(nextView);
-      setResumeTab(params.get('view') === 'cover-letter' ? 'cover-letter' : 'resume');
       setInitialProjectId(nextProjectId);
       setPortfolioProjectTitle(null);
     };
@@ -80,26 +75,14 @@ function App() {
     setView(nextView);
     setInitialProjectId(null);
     setPortfolioProjectTitle(null);
-    if (nextView !== 'resume') setResumeTab('resume');
     const url = nextView === 'home' ? window.location.pathname : `?view=${nextView}`;
     window.history.pushState({ view: nextView }, '', url);
-    window.scrollTo({ top: 0, behavior: 'auto' });
-  };
-
-  const changeResumeTab = (tab: 'resume' | 'cover-letter') => {
-    setResumeTab(tab);
-    setInitialProjectId(null);
-    setPortfolioProjectTitle(null);
-    if (view !== 'resume') setView('resume');
-    const url = tab === 'cover-letter' ? '?view=cover-letter' : '?view=resume';
-    window.history.pushState({ view: 'resume', tab }, '', url);
     window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
   const openPortfolioProject = (projectId: number) => {
     const projectTitle = projectsData.find(project => project.id === projectId)?.title || null;
     setView('portfolio');
-    setResumeTab('resume');
     setInitialProjectId(projectId);
     setPortfolioProjectTitle(projectTitle);
     window.history.pushState({ view: 'portfolio', projectId }, '', `?view=portfolio&project=${projectId}`);
@@ -129,21 +112,16 @@ function App() {
     <DashboardShell
       currentView={view}
       onViewChange={changeView}
-      resumeTab={resumeTab}
-      setResumeTab={changeResumeTab}
       onPdfDownload={triggerPdfDownload}
       breadcrumbDetail={breadcrumbDetail}
     >
       <>
         {view === 'home' && <DashboardHome key="home" onViewChange={changeView} />}
 
-        {view === 'resume' && (
+        {(view === 'resume' || view === 'cover-letter') && (
           <Resume
-            key="resume"
-            setView={(next) => {
-              if (next === 'cover-letter') changeResumeTab('cover-letter');
-              else changeView(normalizeView(String(next)));
-            }}
+            key={view}
+            setView={changeView}
             isEditing={isEditing}
             setIsEditing={setIsEditing}
             data={resumeData}
@@ -151,8 +129,8 @@ function App() {
             projects={projectsData}
             onOpenProject={openPortfolioProject}
             onBack={() => changeView('home')}
-            activeTab={resumeTab}
-            setActiveTab={changeResumeTab}
+            activeTab={view === 'cover-letter' ? 'cover-letter' : 'resume'}
+            setActiveTab={(tab) => changeView(tab as DashboardView)}
             isGeneratingPdf={isGeneratingPdf}
             setIsGeneratingPdf={setIsGeneratingPdf}
           />

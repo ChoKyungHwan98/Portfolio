@@ -1,13 +1,11 @@
 import React from 'react';
-import { BriefcaseBusiness, Download, FileText, Gamepad2, Home, Mail, Menu, Tv } from 'lucide-react';
+import { BriefcaseBusiness, Download, FileUser, Gamepad2, Home, Mail, Menu, ScrollText, Tv } from 'lucide-react';
 
-export type DashboardView = 'home' | 'resume' | 'portfolio' | 'game-history' | 'anime-history';
+export type DashboardView = 'home' | 'resume' | 'cover-letter' | 'portfolio' | 'game-history' | 'anime-history';
 
 interface DashboardShellProps {
   currentView: DashboardView;
   onViewChange: (view: DashboardView) => void;
-  resumeTab: 'resume' | 'cover-letter';
-  setResumeTab: (tab: 'resume' | 'cover-letter') => void;
   onPdfDownload: () => void;
   breadcrumbDetail?: string | null;
   children: React.ReactNode;
@@ -20,7 +18,8 @@ const NAV_ITEMS: {
   icon: React.ReactNode;
 }[] = [
   { id: 'home', label: '홈', title: '홈 화면', icon: <Home className="w-5 h-5" /> },
-  { id: 'resume', label: '이력 및 자기소개', title: '이력 및 자기소개', icon: <FileText className="w-5 h-5" /> },
+  { id: 'resume', label: '이력서', title: '이력서', icon: <FileUser className="w-5 h-5" /> },
+  { id: 'cover-letter', label: '자기소개서', title: '자기소개서', icon: <ScrollText className="w-5 h-5" /> },
   { id: 'portfolio', label: '포트폴리오', title: '포트폴리오', icon: <BriefcaseBusiness className="w-5 h-5" /> },
   { id: 'game-history', label: '게임 플레이 이력', title: '게임 플레이 이력', icon: <Gamepad2 className="w-5 h-5" /> },
   { id: 'anime-history', label: '애니메이션 시청 이력', title: '애니메이션 시청 이력', icon: <Tv className="w-5 h-5" /> },
@@ -29,21 +28,13 @@ const NAV_ITEMS: {
 export const DashboardShell = ({
   currentView,
   onViewChange,
-  resumeTab,
-  setResumeTab,
   onPdfDownload,
   breadcrumbDetail,
   children,
 }: DashboardShellProps) => {
   const currentTitle = NAV_ITEMS.find((item) => item.id === currentView)?.title ?? '홈 화면';
-  const [sidebarOverride, setSidebarOverride] = React.useState<{
-    view: DashboardView;
-    expanded: boolean;
-  } | null>(null);
+  const [isSidebarExpanded, setIsSidebarExpanded] = React.useState(true);
   const bodyRef = React.useRef<HTMLDivElement>(null);
-  const isSidebarExpanded = sidebarOverride?.view === currentView
-    ? sidebarOverride.expanded
-    : false;
   const previousSidebarExpandedRef = React.useRef(isSidebarExpanded);
 
   React.useLayoutEffect(() => {
@@ -78,10 +69,7 @@ export const DashboardShell = ({
         <button
           type="button"
           className="dashboard-menu-toggle"
-          onClick={() => setSidebarOverride({
-            view: currentView,
-            expanded: !isSidebarExpanded,
-          })}
+          onClick={() => setIsSidebarExpanded((prev) => !prev)}
           aria-label={isSidebarExpanded ? '메뉴 접기' : '메뉴 펼치기'}
         >
           <Menu className="w-6 h-6" />
@@ -126,27 +114,8 @@ export const DashboardShell = ({
             )}
           </div>
 
-          {currentView === 'resume' && (
-            <div className="dashboard-segment" role="tablist" aria-label="이력서와 자기소개서">
-              <button
-                type="button"
-                className={resumeTab === 'resume' ? 'active' : ''}
-                onClick={() => setResumeTab('resume')}
-              >
-                이력
-              </button>
-              <button
-                type="button"
-                className={resumeTab === 'cover-letter' ? 'active' : ''}
-                onClick={() => setResumeTab('cover-letter')}
-              >
-                자기소개
-              </button>
-            </div>
-          )}
-
           <div className="dashboard-header-actions">
-            {currentView === 'resume' && (
+            {(currentView === 'resume' || currentView === 'cover-letter') && (
               <button type="button" className="dashboard-action-btn" onClick={onPdfDownload}>
                 <Download className="w-4 h-4" />
                 PDF 다운로드
