@@ -1533,24 +1533,7 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: inset 0 0 0 1px rgba(244, 243, 238, 0.05);
 }
 
-.dashboard-nav-btn[data-tooltip]:hover::after,
-.dashboard-contact[data-tooltip]:hover::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: 64px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 100;
-  padding: 5px 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--paper);
-  background: var(--charcoal);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
+
 
 .dashboard-contact {
   width: 40px;
@@ -2821,10 +2804,7 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 11px;
 }
 
-.dashboard-shell.sidebar-expanded .dashboard-nav-btn[data-tooltip]:hover::after,
-.dashboard-shell.sidebar-expanded .dashboard-contact[data-tooltip]:hover::after {
-  display: none;
-}
+
 
 .dashboard-header {
   height: 60px !important;

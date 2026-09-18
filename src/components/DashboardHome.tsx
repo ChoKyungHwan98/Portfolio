@@ -133,8 +133,11 @@ export const DashboardHome = ({ onViewChange }: DashboardHomeProps) => {
             ))}
           </div>
 
-          <div className="mt-6 px-5 py-4 rounded-2xl border border-dashed border-[rgba(244,243,238,0.12)] text-[#8b8b93] text-[13px] font-semibold tracking-tight leading-relaxed">
-            문의 · 연락 <span className="text-[#d4d4d8] font-bold">ckh980624@gmail.com</span>
+          <div className="mt-6 px-5 py-4 rounded-2xl border border-dashed border-[rgba(244,243,238,0.12)] text-[#8b8b93] text-[13px] font-semibold tracking-tight leading-relaxed flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span>문의 · 연락</span>
+            <a href="mailto:ckh980624@gmail.com" className="text-[#d4d4d8] font-bold hover:text-white transition-colors">ckh980624@gmail.com</a>
+            <span className="text-[#525d6a]">·</span>
+            <a href="tel:010-4826-6256" className="text-[#d4d4d8] font-bold hover:text-white transition-colors">010-4826-6256</a>
           </div>
         </motion.div>
 

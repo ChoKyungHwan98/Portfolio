@@ -96,7 +96,7 @@ export const DashboardShell = ({
               className={`dashboard-nav-btn${currentView === item.id ? ' active' : ''}`}
               onClick={() => handleNavClick(item.id)}
               aria-label={item.label}
-              data-tooltip={item.label}
+              title={item.label}
             >
               {item.icon}
               <span>{item.label}</span>
@@ -104,7 +104,7 @@ export const DashboardShell = ({
           ))}
         </nav>
 
-        <div className="dashboard-contact" aria-label="ckh980624@gmail.com" data-tooltip="ckh980624@gmail.com">
+        <div className="dashboard-contact" aria-label="ckh980624@gmail.com" title="ckh980624@gmail.com">
           <Mail className="w-5 h-5" />
           <span>ckh980624@gmail.com</span>
         </div>
