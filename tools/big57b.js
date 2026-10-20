@@ -1,0 +1,14 @@
+const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
+const [W,H]=[+process.argv[2]||1280,+process.argv[3]||600];
+(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],ignoreDefaultArgs:['--hide-scrollbars']});const p=await b.newPage();await p.setViewport({width:W,height:H});
+const st=()=>p.evaluate(()=>{const o={doc:document.scrollingElement.scrollTop};document.querySelectorAll('*').forEach(e=>{if((e.scrollTop||e.scrollLeft)&&!e.closest('.ov'))o[e.tagName+'.'+String(e.className).slice(0,24)]=[e.scrollTop,e.scrollLeft]});const h=[...document.querySelectorAll('button,a')].find(e=>/홈/.test(e.textContent));o.home=h?Math.round(h.getBoundingClientRect().top):null;return JSON.stringify(o)});
+await p.goto('http://localhost:8766/#/portfolio/ai-review',{waitUntil:'networkidle0'});await sl(2500);console.log('start',await st());
+const inFrame=async(sel)=>{for(const f of p.frames()){if(!f.url().includes('airv'))continue;const ok=await f.evaluate(()=>1).catch(()=>0);if(!ok)continue;}};
+const act=async(fr)=>{await fr.evaluate(()=>document.querySelector('.nav-item[data-page="topics"]').click());await sl(800);
+ await fr.evaluate(()=>{const r=[...document.querySelectorAll('[data-action="select"]')];r[5].dispatchEvent(new MouseEvent('click',{bubbles:true}))});await sl(1200);};
+let f=p.frames().find(x=>x.url().includes('airv'));await act(f);console.log('inline topic click',await st());
+await p.screenshot({path:'/workspace/rhythm/shots/v57_bug_inline.png'});
+await p.evaluate(()=>{document.querySelectorAll('*').forEach(e=>{e.scrollTop=0;e.scrollLeft=0})});
+await p.click('.as-big');await sl(1800);f=p.frames().filter(x=>x.url().includes('airv')).pop();await act(f);console.log('big topic click',await st());
+await p.keyboard.press('Escape');await sl(300);await p.mouse.click(4,4);await sl(900);console.log('after close',await st(),await p.evaluate(()=>!!document.querySelector('.ov')));
+await p.screenshot({path:'/workspace/rhythm/shots/v57_bug_after.png'});await b.close()})();

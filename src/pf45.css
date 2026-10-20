@@ -1,0 +1,209 @@
+/* ===== v4.5 포트폴리오: 강약. 주(Battle) 하나가 첫 화면을 차지하고, 부 둘은 옆에 위아래로, 셋째·그 밖은 아래(짧게 내려 보면 됨).
+   바탕은 무늬 없는 흰 판(점·모눈 뺌) — 판끼리의 크기·명암 차이만으로 순서가 읽히게 ===== */
+.sheet-in:has(.wk-list,.pf-detail){padding-top:34px}
+
+.wk-list{position:relative}
+.wk-head{display:flex;align-items:flex-end;margin:0 0 18px}
+.wk-h1{font-size:44px;line-height:1}
+.wk-h1 .sh-mark .hl{display:block}
+
+/* 첫 화면 칸: 왼쪽 큰 주 판(두 줄 차지) + 오른쪽 부 판 둘. 높이 = 창 높이에 맞춰(낮은 창 450 ~ 큰 창 640) */
+.wk-top,.wk-ter,.wk-links{list-style:none;margin:0;padding:0}
+.wk-top{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);grid-template-rows:1fr 1fr;gap:20px;
+  height:clamp(430px,calc(100vh - 150px),640px)}
+.wk-li{list-style:none;min-width:0;min-height:0}
+.wk-li.hero{grid-row:1/3}
+.wk-card{position:relative;display:flex;height:100%;background:#fff;color:var(--ink);border:3px solid var(--ink);overflow:hidden;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;transition:box-shadow 140ms cubic-bezier(.23,1,.32,1)}
+.wk-card:has(.pf-hit:focus-visible){outline:3px solid var(--ink);outline-offset:4px}
+.wk-card .pf-hit:focus,.wk-card .pf-hit:focus-visible{outline:none}
+
+/* 그림 자리: 점선 상자 대신 '빈 포스터' — 큰 이름 글자 윤곽 + 구석의 작은 설명. 주 판만 어둡게(가장 센 명암) */
+.wk-art{position:relative;display:block;overflow:hidden;background:#ececec;flex:none}
+.wk-ghost{position:absolute;left:-.04em;bottom:-.2em;font-family:var(--display);font-size:var(--gs,96px);line-height:1;white-space:nowrap;color:transparent;
+  -webkit-text-stroke:2px #d2d2d2;letter-spacing:-.02em;pointer-events:none}
+.wk-cap{position:absolute;left:16px;top:14px;display:flex;align-items:center;gap:8px;font:800 12.5px/1 var(--body);letter-spacing:.04em;color:#8a8a8a}
+.wk-cap::before{content:"";width:8px;height:8px;border-radius:2px;background:#bdbdbd}
+.wk-art.hero{background:#141414}
+.wk-art.hero .wk-ghost{-webkit-text-stroke:2px #333;--gs:clamp(110px,13vw,210px)}
+.wk-art.hero .wk-cap{color:#9a9a9a;left:22px;top:20px;font-size:13px}
+.wk-art.hero .wk-cap::before{background:#FFD400}
+
+.wk-body{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0;flex:1}
+.wk-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.wk-tag{display:inline-block;font:800 13px/1 var(--body);padding:7px 10px 6px;background:var(--ink);color:#fff;border-radius:8px;letter-spacing:.02em;white-space:nowrap}
+.wk-sub{font:800 15px/1 var(--body);color:#4a4a4a}
+.wk-tl{display:block;max-width:100%}
+.wk-title{display:inline-block;margin:0;font-family:var(--display);font-weight:400;line-height:1.08;letter-spacing:-.01em;word-break:keep-all;color:inherit;text-decoration:none;text-shadow:none}
+/* '내가 설계한 것': 상자 없이 왼쪽 줄 하나 + 글. 아직 없으니 '준비 중'을 글로(회색 막대 대신) */
+.wk-did{display:flex;flex-direction:column;gap:5px;padding:2px 0 2px 12px;border-left:3px solid #d6d6d6}
+.wk-did b{font:800 12px/1 var(--body);letter-spacing:.04em;color:#5a5a5a}
+.wk-did span{font:700 14px/1.3 var(--body);color:#9a9a9a}
+.wk-did.big{border-left-color:#FFD400;border-left-width:4px;padding-left:14px;gap:7px}
+.wk-did.big b{font-size:13px}
+.wk-did.big span{font-size:16px}
+.wk-more{display:inline-flex;align-items:center;gap:7px;margin-top:auto;font:800 14px/1 var(--body);color:var(--ink)}
+.wk-more i,.wk-cta i,.wk-arrow{display:inline-block;width:8px;height:8px;border-top:3px solid currentColor;border-right:3px solid currentColor;rotate:45deg;
+  transition:translate 160ms cubic-bezier(.34,1.56,.64,1)}
+
+/* 주 판: 위 큰 그림 · 아래 글. 이름이 가장 크고, 노란 '프로젝트 보기' 하나만 */
+.wk-card.hero{flex-direction:column;box-shadow:8px 8px 0 var(--ink)}
+.wk-card.hero .wk-art{flex:1;min-height:0;border-bottom:3px solid var(--ink)}
+.wk-card.hero .wk-body{flex:none;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"meta meta" "tl tl" "did cta";
+  align-items:end;column-gap:20px;row-gap:10px;padding:20px 24px 22px;width:100%}
+.wk-card.hero .wk-meta{grid-area:meta} .wk-card.hero .wk-tl{grid-area:tl} .wk-card.hero .wk-did{grid-area:did;align-self:end}
+.wk-card.hero .wk-title{font-size:clamp(44px,4.4vw,68px)}
+.wk-card.hero .wk-tag{font-size:14px;padding:8px 12px 7px}
+.wk-cta{grid-area:cta;display:inline-flex;align-items:center;gap:10px;height:48px;padding:3px 20px 0 22px;border:3px solid var(--ink);border-radius:14px;background:#FFD400;
+  font-family:var(--display);font-size:20px;line-height:1;white-space:nowrap;box-shadow:0 4px 0 var(--ink);transition:translate 140ms cubic-bezier(.23,1,.32,1),box-shadow 140ms}
+.wk-cta i{width:9px;height:9px;margin-top:-3px}
+
+/* 부 판: 가로(왼쪽 옅은 그림 · 오른쪽 글). 그림자·글자 한 단계 작게 */
+.wk-card.sec{flex-direction:row;box-shadow:6px 6px 0 var(--ink)}
+.wk-card.sec .wk-art{width:40%;border-right:3px solid var(--ink);--gs:clamp(56px,5.4vw,86px)}
+.wk-card.sec .wk-body{padding:16px 18px 16px}
+.wk-card.sec .wk-title{font-size:clamp(24px,2.1vw,32px)}
+
+/* 셋째(도로시아): 아래 낮은 띠. 한 줄로 이름 · 한 줄 · 핵심 수치 · 보기 */
+.wk-ter{margin-top:30px}
+.wk-card.ter{flex-direction:row;align-items:stretch;border-width:2.5px;box-shadow:4px 4px 0 var(--ink)}
+.wk-card.ter .wk-art{width:clamp(110px,12vw,170px);border-right:2.5px solid var(--ink);--gs:52px}
+.wk-card.ter .wk-cap{display:none}
+.wk-card.ter .wk-body{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;grid-template-rows:auto auto;grid-template-areas:"meta did num more" "tl did num more";
+  align-items:center;column-gap:26px;row-gap:8px;padding:14px 22px}
+.wk-card.ter .wk-meta{grid-area:meta} .wk-card.ter .wk-tl{grid-area:tl} .wk-card.ter .wk-did{grid-area:did} .wk-card.ter .wk-num{grid-area:num} .wk-card.ter .wk-more{grid-area:more;margin:0}
+.wk-card.ter .wk-title{font-size:clamp(22px,1.8vw,28px)}
+.wk-num{display:flex;flex-direction:column;gap:5px;padding-left:12px;border-left:3px solid #d6d6d6}
+.wk-num b{font:800 12px/1 var(--body);letter-spacing:.04em;color:#5a5a5a}
+.wk-num span{font:700 14px/1.3 var(--body);color:#9a9a9a}
+
+/* 그 밖: 상자 없는 글 링크 */
+.wk-etc{margin-top:30px}
+.wk-sec{display:flex;align-items:center;gap:12px;margin:0 0 6px;font:800 14px/1 var(--body);letter-spacing:.06em;color:#6b6b6b}
+.wk-sec::after{content:"";flex:1;height:2px;background:#e2e2e2}
+.wk-links{display:flex;flex-wrap:wrap;column-gap:40px}
+.wk-li.link{min-width:0}
+.wk-card.link{display:inline-flex;height:auto;border:0;background:transparent;overflow:visible;padding:10px 4px}
+.wk-card.link .wk-body{flex-direction:row;align-items:center;gap:12px}
+.wk-card.link .wk-tag{background:transparent;color:#6b6b6b;padding:0;font-size:13px}
+.wk-card.link .wk-title{font-size:22px;background:linear-gradient(#FFD400,#FFD400) 0 88%/0 38% no-repeat;transition:background-size 180ms cubic-bezier(.23,1,.32,1)}
+.wk-card.link .wk-arrow{width:7px;height:7px;border-width:2.5px}
+
+.wk-card:active{box-shadow:2px 2px 0 var(--ink)}
+.wk-card.link:active{box-shadow:none}
+@media (hover:hover) and (pointer:fine){
+  .wk-card.hero:hover{box-shadow:11px 12px 0 var(--ink)} .wk-card.sec:hover{box-shadow:9px 10px 0 var(--ink)} .wk-card.ter:hover{box-shadow:6px 7px 0 var(--ink)}
+  .wk-card.hero:hover .wk-cta{translate:0 -2px;box-shadow:0 6px 0 var(--ink)} .wk-card:hover .wk-cta i,.wk-card:hover .wk-more i,.wk-card:hover .wk-arrow{translate:3px -3px}
+  .wk-card.link:hover .wk-title{background-size:100% 38%}
+  .wk-card:active:hover{box-shadow:2px 2px 0 var(--ink)} .wk-card.link:active:hover{box-shadow:none}
+}
+
+/* 낮은 창(1280×600, 1366×657): 여백·글자만 줄이고 구조는 그대로 */
+@media (min-width:769px) and (max-height:700px){
+  .sheet-in:has(.wk-list,.pf-detail){padding-top:18px}
+  .wk-head{margin-bottom:12px} .wk-h1{font-size:36px}
+  .wk-top{gap:16px;height:clamp(430px,calc(100vh - 128px),560px)}
+  .wk-card.hero .wk-body{padding:14px 20px 16px;row-gap:8px}
+  .wk-card.hero .wk-title{font-size:clamp(40px,3.8vw,54px)}
+  .wk-cta{height:44px;font-size:18px}
+  .wk-card.sec .wk-body{padding:12px 14px;gap:6px}
+  .wk-card.sec .wk-title{font-size:clamp(22px,1.9vw,28px)}
+  .wk-did span{font-size:13px} .wk-did.big span{font-size:15px}
+}
+
+/* ---- 상세 ---- */
+.wd-hero{display:grid;grid-template-columns:minmax(0,52%) minmax(0,1fr);height:auto;margin:0 0 30px;box-shadow:8px 8px 0 var(--ink);cursor:default}
+.wd-hero .wk-art{min-height:340px;border-right:3px solid var(--ink)}
+.wd-hero .wk-body{justify-content:center;gap:12px;padding:26px 30px}
+.wd-hero .wk-title{font-size:clamp(40px,4vw,62px);outline:none;-webkit-user-select:text;user-select:text}
+.wd-hero .wk-tag{font-size:14px;padding:8px 12px 7px}
+.wd-more{display:flex;flex-direction:column;align-items:flex-start;gap:14px;align-self:stretch;margin-top:4px}
+.wd-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 18px;margin:0;align-self:stretch}
+.wd-facts dt{font:800 12px/1 var(--body);letter-spacing:.04em;color:#5a5a5a;margin-bottom:6px}
+.wd-facts dd{margin:0;font:700 14px/1.3 var(--body);color:#9a9a9a}
+.wd-keys{display:flex;flex-wrap:wrap;gap:6px}
+.wd-keys i{font:800 12px/1 var(--body);font-style:normal;padding:6px 9px 5px;border:2px solid var(--ink);border-radius:7px}
+.wd-hero .pf-res{margin:0;pointer-events:none}
+.wd-stack{display:flex;flex-direction:column;gap:30px}
+.wd-sec h2{margin:0 0 12px;font-family:var(--display);font-weight:400;font-size:26px;line-height:1}
+.wd-slot{display:grid;place-items:center;min-height:160px;border-radius:16px;background:#f2f2f2}
+.wd-slot span{font:800 13px/1 var(--body);letter-spacing:.05em;color:#8a8a8a}
+.wd-sec.doc .wd-slot{min-height:380px}
+.wd-slot.dark{aspect-ratio:16/9;max-height:460px;width:100%;background:#141414;gap:14px;align-content:center}
+.wd-slot.dark span{color:#9a9a9a}
+.wd-play{display:block;width:0;height:0;border-left:30px solid #FFD400;border-top:19px solid transparent;border-bottom:19px solid transparent;margin-left:8px}
+.wd-nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.wd-nums > div{display:flex;flex-direction:column;gap:8px;padding:18px 20px;border-radius:16px;background:#f2f2f2}
+.wd-nums b{font-family:var(--display);font-weight:400;font-size:36px;line-height:1;color:#bdbdbd;letter-spacing:.06em}
+.wd-nums span{font:800 13px/1 var(--body);color:#8a8a8a}
+.wd-next{display:flex;align-items:center;gap:14px;padding:18px 22px;border:3px solid var(--ink);border-radius:18px;box-shadow:6px 6px 0 var(--ink);color:var(--ink);text-decoration:none;
+  transition:box-shadow 140ms cubic-bezier(.23,1,.32,1)}
+.wd-next small{font:800 13px/1 var(--body);color:#6b6b6b;margin-right:6px}
+.wd-next b{font-family:var(--display);font-weight:400;font-size:26px;line-height:1;flex:1}
+.wd-next:active{box-shadow:2px 2px 0 var(--ink)}
+@media (hover:hover) and (pointer:fine){ .wd-next:hover{box-shadow:9px 10px 0 var(--ink)} .wd-next:hover .wk-arrow{translate:3px -3px} }
+
+@media (max-width:768px){
+  .wk-top{grid-template-columns:1fr;grid-template-rows:none;height:auto;gap:16px}
+  .wk-li.hero{grid-row:auto}
+  .wk-card.hero .wk-art{flex:none;aspect-ratio:16/9}
+  .wk-card.hero .wk-body{grid-template-areas:"meta" "tl" "did" "cta";grid-template-columns:1fr}
+  .wk-card.sec .wk-art{width:34%}
+  .wk-card.ter .wk-body{grid-template-columns:1fr;grid-template-areas:"meta" "tl" "did" "num" "more"}
+  .wd-hero{grid-template-columns:1fr} .wd-hero .wk-art{min-height:200px;border-right:0;border-bottom:3px solid var(--ink)}
+  .wd-facts,.wd-nums{grid-template-columns:1fr 1fr}
+}
+/* 큰 창에서 판을 조금 넓게(1180 → 1320): 주 판 그림이 더 크게 */
+.sheet-in:has(.wk-list,.pf-detail){max-width:1320px}
+.wk-card.sec .wk-art{--gs:clamp(48px,4.6vw,80px)}
+.wd-slot.dark{width:min(100%,820px)}
+
+/* ===== v4.6 바탕 = 반응하는 망점 판(Field 캔버스). 세 문서 판 공통. 예전 정적 점무늬·구석 장식은 끔 ===== */
+.sheet.fielded{background:#efefef}
+.sheet.fielded::before,.sheet.fielded .sheet-deco{display:none}
+.fld{position:absolute;left:0;top:0;z-index:0;pointer-events:none}
+
+/* 깊이: 판 위 카드에 하드 섀도 + 넓고 옅은 그림자 하나 더(바탕에서 떠 있는 느낌) */
+.wk-card.hero{box-shadow:8px 8px 0 var(--ink),0 26px 46px -22px rgba(0,0,0,.32)}
+.wk-card.sec{box-shadow:6px 6px 0 var(--ink),0 22px 40px -22px rgba(0,0,0,.28)}
+.wk-card.ter{box-shadow:4px 4px 0 var(--ink),0 18px 34px -20px rgba(0,0,0,.24)}
+.wd-hero{box-shadow:8px 8px 0 var(--ink),0 26px 46px -22px rgba(0,0,0,.32)}
+@media (hover:hover) and (pointer:fine){
+  .wk-card.hero:hover{box-shadow:11px 12px 0 var(--ink),0 32px 54px -22px rgba(0,0,0,.34)}
+  .wk-card.sec:hover{box-shadow:9px 10px 0 var(--ink),0 28px 48px -22px rgba(0,0,0,.3)}
+  .wk-card.ter:hover{box-shadow:6px 7px 0 var(--ink),0 22px 40px -20px rgba(0,0,0,.26)}
+}
+.wk-card.link .wk-title,.wk-sec{text-shadow:0 0 6px #efefef,0 0 2px #efefef} /* 판 위에 바로 놓인 글: 진해진 점 위에서도 글자 가장자리가 안 묻히게 */
+
+/* 부 판: 그림 칸의 잘린 윤곽 글자 뺌. 칸 높이에 따라 가로(낮을 때) ↔ 세로(높을 때, 그림이 위) — 1440/1920 의 빈 틈 없앰 */
+.wk-li.sec{container-type:size}
+.wk-card.sec .wk-ghost{display:none}
+.wk-card.sec .wk-art{width:36%}
+.wk-card.sec .wk-title{text-wrap:balance}
+@container (min-height:250px){
+  .wk-card.sec{flex-direction:column}
+  .wk-card.sec .wk-art{width:auto;flex:1;min-height:80px;border-right:0;border-bottom:3px solid var(--ink)}
+  .wk-card.sec .wk-body{flex:none;padding:14px 18px 16px}
+  .wk-card.sec .wk-more{margin-top:4px}
+}
+
+/* 상세 정리: 교차 버튼 뺌, 자료는 한 줄(링크 있는 것만 버튼, 나머지는 '준비 중' 글), 설계 요소는 상자 없는 글 */
+.wd-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px}
+.wd-row small,.wd-keys small{font:800 12px/1 var(--body);letter-spacing:.04em;color:#5a5a5a}
+.wd-link{display:inline-flex;align-items:center;gap:6px;height:34px;padding:2px 14px 0;border:2.5px solid var(--ink);border-radius:10px;background:#fff;color:var(--ink);
+  font:800 13.5px/1 var(--body);text-decoration:none;box-shadow:0 3px 0 var(--ink);transition:translate 120ms,box-shadow 120ms,background 120ms}
+.wd-link:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+@media (hover:hover) and (pointer:fine){ .wd-link:hover{background:#FFD400;translate:0 -1px;box-shadow:0 4px 0 var(--ink)} }
+.wd-link:active{translate:0 3px;box-shadow:none}
+.wd-soon{font:700 13.5px/1.3 var(--body);color:#8a8a8a}
+.wd-keys{display:flex;align-items:baseline;gap:10px;font:800 14px/1.3 var(--body);color:#333}
+.wd-keys i{all:unset}
+.wd-rel{display:flex;align-items:center;gap:10px;margin:-6px 0 0;font:700 14px/1.3 var(--body);color:#5a5a5a}
+.wd-rel a{color:var(--ink);font-weight:800;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.wd-rel a:hover{background:#FFD400}
+.wd-rel a:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+/* 판 위 빈 칸: 흰 판(옅은 그림자) — 바탕 회색과 구분 */
+.wd-slot,.wd-nums > div{background:#fff;box-shadow:0 1px 0 #d9d9d9,0 14px 30px -20px rgba(0,0,0,.25)}
+.wd-slot.dark{background:#141414}
+.wd-next{background:#fff}
+.wk-sec,.wk-card.link .wk-tag{color:#4f4f4f} /* 판 위 바로 놓인 작은 회색 글: 바탕 대비 7:1 이상 */

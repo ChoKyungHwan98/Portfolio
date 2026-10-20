@@ -1,0 +1,307 @@
+/* ===== v4.4 미디어 방 (게임 · 애니 한 화면). 큰 모니터 하나 + 입력 둘. 높이는 창 높이에 맞춰 늘고 줆 ===== */
+@font-face{font-family:RetroPx;src:url('./assets/px.woff2') format('woff2');font-display:swap} /* 갈무리11 Bold(OFL)에서 쓰는 글자만: tools/subset_px.py */
+.mr{position:fixed;inset:0;z-index:50;overflow:hidden;display:flex;padding:clamp(8px,1.6vh,16px) clamp(10px,1.4vw,22px) clamp(10px,2vh,20px);
+  color:var(--ink);font-family:var(--body);
+  -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.mr-wall{position:absolute;inset:0;background:#e6e6e6 radial-gradient(circle,#cfcfcf 0 1.6px,transparent 2px) 0 0/14px 14px}
+.mr-wall,.mr-mon{opacity:.001} /* 0 이면 브라우저가 그리기를 미뤘다가 나타나는 순간 한꺼번에 그려 끊김 → 거의 0 으로 미리 그려 둠. 들어가기 움직임이 1로 올림(건너뛰기·움직임 줄이기는 바로 1) */
+.mr-flash{position:absolute;inset:0;z-index:6;background:#fff;opacity:0;pointer-events:none}
+.mr.ready:not(.leaving) .mr-sl{display:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+/* 들어갈 때 화면을 베고 지나가는 사선 셋(노랑·검정·흰). 다 지나가면 화면 밖에 머묾 */
+.mr-sl{position:absolute;z-index:9;top:-30vh;bottom:-30vh;left:0;width:34vw;rotate:16deg;transform:translateX(-130vw);pointer-events:none}
+.mr-sl.a{background:#FFD400;width:26vw} .mr-sl.b{background:#111;width:18vw} .mr-sl.c{background:#fff;width:9vw;border-left:6px solid #111;border-right:6px solid #111}
+/* 모니터: 굵은 테두리 플라스틱 + 아래 띠(입력 버튼) */
+.mr-mon{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;background:#f5f5f5;border:6px solid #111;border-radius:26px;box-shadow:9px 10px 0 #111;padding:10px 10px 0}
+.mr-scr{position:relative;flex:1;min-height:0;background:#111;border:5px solid #111;border-radius:16px;overflow:hidden;box-shadow:0 0 0 3px #d9d9d9}
+.mr-pic{position:absolute;inset:0;display:flex;flex-direction:column;background:#141414;color:#eee;transform-origin:50% 50%}
+.mr-snow{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;opacity:0;pointer-events:none;z-index:4}
+.mr:not(.ready) .mr-snow{opacity:1}
+.mr-wipe{position:absolute;z-index:5;top:-20%;bottom:-20%;left:0;width:38%;rotate:14deg;transform:translateX(-110%);pointer-events:none;
+  background:linear-gradient(90deg,#111 0 14%,#FFD400 14% 86%,#111 86%)}
+.mr-glass{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:11px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.06),inset 0 0 60px rgba(0,0,0,.55)}
+.mr-view{display:flex;flex-direction:column;min-height:0;flex:1}
+/* 머리: 기울어진 노란 판(입력 이름) · 굴러가는 계수기 · 거르기 */
+.mr-head{flex:none;display:grid;grid-template-columns:auto auto 1fr auto;grid-template-areas:"plate count seg sort" "chips chips chips chips";align-items:center;column-gap:18px;row-gap:10px;
+  padding:12px 16px 11px;background:#0c0c0c;border-bottom:3px solid #2e2e2e;position:relative;z-index:2}
+.mr-plate{grid-area:plate;position:relative;display:flex;flex-direction:column;justify-content:center;padding:6px 26px 6px 18px;color:#111;background:#FFD400;transform-origin:0 50%;
+  clip-path:polygon(7% 0,100% 0,93% 100%,0 100%);box-shadow:none;min-width:118px}
+.mr-plate small{font:12px/1 RetroPx,monospace;letter-spacing:.12em}
+.mr-plate b{font:400 30px/1 RetroPx,monospace;letter-spacing:.04em;margin-top:2px}
+.mr-count{grid-area:count;display:flex;align-items:flex-end;gap:10px;transform-origin:0 100%}
+.mr-odo{display:inline-flex;font:400 48px/1 RetroPx,monospace;color:#fff;letter-spacing:.02em}
+.od{position:relative;display:inline-block;height:1em;overflow:hidden;width:.62em;text-align:center}
+.od.z{color:#4a4a4a}
+.od-s{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column}
+.od-s i{font-style:normal;height:1em;line-height:1}
+.mr-unit{display:flex;flex-direction:column;gap:3px;padding-bottom:3px}
+.mr-unit b{font:400 20px/1 RetroPx,monospace;color:#FFD400;letter-spacing:.08em}
+.mr-unit i{font:700 12.5px/1 var(--body);font-style:normal;color:#a8a8a8}
+/* 거르기: 살짝 기운 판(글자는 바로 세움). 켜진 것 = 노랑 */
+.mr-seg{grid-area:seg;justify-self:end;display:flex;gap:6px}
+.mr-chips{grid-area:chips;display:flex;gap:6px;flex-wrap:wrap}
+.mr-seg button,.mr-chips button{appearance:none;border:0;padding:0;background:none;cursor:pointer;color:#dcdcdc;font:800 13.5px/1 var(--body)}
+.mr-seg button > span,.mr-chips button > span{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;background:#232323;border:2px solid #4c4c4c;transform:skewX(-10deg)}
+.mr-seg button > span > *,.mr-chips button > span > *{transform:none}
+.mr-seg button > span{height:34px;padding:0 15px;font-size:14.5px}
+.mr-seg small,.mr-chips small{font:12px/1 RetroPx,monospace;color:#9a9a9a}
+.mr-seg button.on > span,.mr-chips button.on > span{background:#FFD400;border-color:#FFD400;color:#111}
+.mr-seg button.on small,.mr-chips button.on small{color:#111}
+.mr-chips button.none{opacity:.35;cursor:default}
+.mr-seg button:focus-visible > span,.mr-chips button:focus-visible > span{outline:3px solid #fff;outline-offset:2px}
+@media (hover:hover){ .mr-seg button:not(.on):hover > span,.mr-chips button:not(.on):not(.none):hover > span{border-color:#FFD400;color:#fff} }
+/* 몸통: 화면 안에서만 스크롤 */
+.mr-body{flex:1;min-height:0;overflow:auto;padding:12px 16px 18px;outline:none;scrollbar-color:#FFD400 #1e1e1e;scrollbar-width:thin;overscroll-behavior:contain}
+.mr-body:focus-visible{box-shadow:inset 0 0 0 3px #FFD400}
+.mr-sec + .mr-sec{margin-top:16px}
+.mr-tag{display:inline-flex;align-items:center;gap:8px;margin:0 0 10px;padding:5px 18px 5px 12px;background:#fff;color:#111;clip-path:polygon(0 0,100% 0,92% 100%,0 100%)}
+.mr-tag b{font:400 16px/1 RetroPx,monospace;letter-spacing:.06em}
+.mr-tag small{font:13px/1 RetroPx,monospace;color:#555}
+.mr-tag.w{background:#2a2a2a;color:#eee} .mr-tag.w small{color:#aaa}
+.mr-grid{list-style:none;margin:0;padding:0;display:grid;gap:14px 12px}
+.mr-grid.game{grid-template-columns:repeat(auto-fill,minmax(158px,1fr))}
+.mr-grid.anime{grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}
+.mr-empty{color:#aaa;font:700 14px/1.4 var(--body)}
+.mr-src{margin:18px 0 0;color:#777;font:600 12px/1.4 var(--body)}
+/* 카드 공통: 표지 위 주사선·망점(가만히 있을 때) → 올리거나 고르면 걷힘 */
+.mr-it{position:relative;min-width:0;outline:none;content-visibility:auto;contain-intrinsic-size:auto 170px;cursor:default}
+.cov{position:relative;display:block;overflow:hidden;background:#1b1b1b}
+.cov img{display:block;width:100%;height:100%;object-fit:cover;filter:saturate(.8) contrast(1.05) brightness(.95);transition:filter 140ms}
+.cov.icon img{object-fit:contain;padding:6px}
+.cov::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:1;transition:opacity 140ms;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.26) 0 1px,transparent 1px 3px),radial-gradient(rgba(0,0,0,.12) 30%,transparent 32%) 0 0/3px 3px}
+.mr-it:hover .cov::after,.mr-it:focus-visible .cov::after,.mr-it:focus .cov::after{opacity:0}
+.mr-it:hover .cov img,.mr-it:focus .cov img{filter:none}
+.cov-none{position:absolute;inset:0;display:grid;place-items:center;padding:8px;text-align:center;font:700 12px/1.3 var(--body);color:#bbb}
+.tt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:7px;font:800 13px/1.28 var(--body);color:#f1f1f1;word-break:keep-all}
+.mt{display:block;margin-top:3px;font:600 11.5px/1.3 var(--body);color:#9b9b9b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp{display:block;margin-top:4px;font:800 11.5px/1.3 var(--body);color:#FFD400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 게임 = 카트리지: 짙은 회색 몸통 · 위 손잡이 홈 · 라벨 자리에 표지 */
+.gc{padding:7px 7px 9px;background:#2b2b2b;border:3px solid #050505;border-radius:10px 10px 5px 5px;transition:translate 140ms cubic-bezier(.34,1.56,.64,1),border-color 120ms}
+.gc-grip{display:flex;gap:4px;justify-content:center;margin:-1px 0 5px}
+.gc-grip i{width:18px;height:3px;border-radius:2px;background:#151515}
+.gc .cov{aspect-ratio:16/9;border:2px solid #000;border-radius:3px}
+.gc .tt,.gc .mt,.gc .sp{padding:0 2px}
+.bd{position:absolute;left:5px;bottom:5px;display:flex;gap:4px;z-index:1}
+.bd em,.b-fav,.b-rank{font-style:normal;font:12px/1 RetroPx,monospace;padding:4px 6px 3px;border:2px solid #111}
+.b-h{background:#FFD400;color:#111} .b-p{background:#fff;color:#111} .b-c{background:#111;color:#eee;border-color:#eee!important}
+.b-fav{position:absolute;right:5px;top:5px;background:#111;color:#FFD400;border-color:#FFD400}
+.gc.fav{border-color:#FFD400}
+/* 애니 = 비디오테이프 케이스: 왼쪽 흰 등(방영 연도·분기) + 표지 */
+.vc-case{display:grid;grid-template-columns:20px 1fr;background:#0a0a0a;border:3px solid #050505;border-radius:5px;overflow:hidden;transition:border-color 120ms}
+.vc-spine{display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px 0;background:#ececec;color:#111;border-right:3px solid #050505}
+.vc-spine b{writing-mode:vertical-rl;font:400 11px/1 RetroPx,monospace;letter-spacing:.06em}
+.vc-spine i{font-style:normal;font:10px/1 RetroPx,monospace;writing-mode:vertical-rl}
+.vc .cov{aspect-ratio:2/2.9}
+.b-rank{position:absolute;left:4px;top:4px;background:#FFD400;color:#111;font-size:14px!important}
+.vc.fav .vc-case{border-color:#FFD400} .vc.fav .vc-spine{background:#FFD400}
+.vc{transition:translate 140ms cubic-bezier(.34,1.56,.64,1)}
+@media (hover:hover) and (pointer:fine){ .mr-it:hover{translate:0 -3px} .gc:hover,.vc:hover .vc-case{border-color:#fff} .gc.fav:hover{border-color:#fff} }
+.mr-it:focus-visible{translate:0 -3px} .gc:focus-visible,.vc:focus-visible .vc-case{border-color:#fff;box-shadow:0 0 0 3px #FFD400}
+.vc:focus-visible{box-shadow:none}
+/* 아래 띠: 홈 · 입력 둘(기기 그림 + 이름) · 효과음 */
+.mr-bez{flex:none;display:flex;align-items:center;gap:12px;height:clamp(50px,7.4vh,62px);padding:0 4px}
+.mr-btn{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 13px;background:#fff;color:#111;border:3px solid #111;border-radius:10px;box-shadow:3px 3px 0 #111;font:800 14px/1 var(--body);cursor:pointer}
+.mr-btn svg{width:18px;height:18px;fill:none;stroke:#111;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.mr-btn kbd{font:700 11px/1 var(--body);padding:3px 5px;border:2px solid #111;border-radius:5px;background:#f0f0f0}
+.mr-btn.mute{margin-left:auto} .mr-btn.mute.off{color:#777}
+.mr-btn:active{translate:2px 2px;box-shadow:1px 1px 0 #111}
+.mr-btn:focus-visible,.mr-in:focus-visible{outline:3px solid #111;outline-offset:3px}
+.mr-inputs{display:flex;gap:10px;margin-left:auto}
+.mr-in{display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 12px 0 8px;background:#fff;border:3px solid #111;border-radius:10px;box-shadow:3px 3px 0 #111;cursor:pointer;color:#111;
+  transition:background 100ms,translate 100ms}
+.mr-in.on{background:#FFD400;translate:2px 2px;box-shadow:1px 1px 0 #111}
+.mr-dev{display:block;width:78px;height:36px;overflow:visible}
+.mr-dev svg{width:100%;height:100%;overflow:visible;display:block}
+.mr-in-t{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.mr-in-t small{font:700 10.5px/1 var(--body);color:#444}
+.mr-in-t b{font:400 18px/1 RetroPx,monospace}
+.mr-in kbd{font:700 11px/1 var(--body);padding:3px 5px;border:2px solid #111;border-radius:5px;background:#fff}
+@media (hover:hover){ .mr-in:not(.on):hover{background:#fff6c2} }
+/* 낮은 창(≈1280×600): 머리·띠를 한 단계 줄여 화면(목록)에 높이를 더 줌 */
+@media (max-height:700px){
+  .mr-head{padding:9px 14px 9px;row-gap:8px}
+  .mr-odo{font-size:38px} .mr-plate b{font-size:24px} .mr-unit b{font-size:17px}
+  .mr-chips button > span{height:27px;padding:0 10px} .mr-seg button > span{height:30px}
+  .mr-in{height:40px} .mr-dev{width:66px;height:30px} .mr-btn{height:34px}
+  .mr-mon{padding:8px 8px 0}
+}
+@media (max-width:1100px){ .mr-in-t small{display:none} .mr-dev{width:56px} }
+@media (prefers-reduced-motion:reduce){ .mr-it,.cov img,.cov::after{transition:none} }
+/* ===== v5.2 방(장면 이동). 단위 u = min(1vh, .56vw): 방 그림 전체가 창 크기에 맞춰 같이 줄고 늚.
+   판 넷: 벽(−420) · TV 장과 물건(−120) · 앞 소품(+150) · 문틀(+620, 걸어 들어올 때만). 쉬는 자리에선 판마다 크기를 되돌려 화면 좌표 그대로 ===== */
+.mr.room2{--u:min(1vh,.56vw);display:block;padding:0;perspective:1000px;perspective-origin:50% 45%;background:#262626}
+.room2 .rm-cam{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:50% 45%}
+.room2 .rm-layer{position:absolute;inset:0;transform-style:preserve-3d;pointer-events:none}
+.room2:not(.walk) .rm-layer{transform:none!important} .room2:not(.walk) .rm-cam{transform-style:flat}
+.room2 .rm-pl{position:absolute;inset:0}
+.room2 .rm-stage{left:50%;right:auto;top:auto;bottom:0;width:0;height:0;inset:auto auto 0 50%}
+/* 벽 */
+.rw{position:absolute;inset:0}
+.rw::before{content:"";position:absolute;inset:-120vh -150vw;background:repeating-linear-gradient(90deg,#dedede 0 2px,#e8e8e8 2px 26px)}
+.rw-floor{position:absolute;left:-150vw;right:-150vw;top:calc(100% - var(--u) * 30);bottom:-120vh;border-top:calc(var(--u) * 1.4) solid #111;
+  background:repeating-linear-gradient(90deg,#b4b4b4 0 3px,#c4c4c4 3px calc(var(--u) * 14))}
+.rw svg{position:absolute;display:block}
+.rw-win{left:calc(50% - var(--u) * 98);bottom:calc(var(--u) * 44);width:calc(var(--u) * 34)}
+.rw-poster{left:calc(50% - var(--u) * 46);bottom:calc(var(--u) * 57);width:calc(var(--u) * 20)}
+.rw-shelf{left:calc(50% + var(--u) * 60);bottom:calc(var(--u) * 58);width:calc(var(--u) * 34)}
+.rw-clock{left:calc(50% + var(--u) * 30);bottom:calc(var(--u) * 84);width:calc(var(--u) * 10)}
+.rw-glow{position:absolute;left:calc(50% + var(--u) * 58);bottom:calc(var(--u) * 20);width:calc(var(--u) * 60);height:calc(var(--u) * 60);border-radius:50%;
+  background:radial-gradient(closest-side,rgba(255,212,0,.32),rgba(255,212,0,0))}
+/* TV 장 */
+.rc{position:absolute;left:calc(var(--u) * -64);bottom:calc(var(--u) * 12);width:calc(var(--u) * 128);height:calc(var(--u) * 22);display:flex;gap:calc(var(--u) * 1);
+  padding:calc(var(--u) * 3.4) calc(var(--u) * 2) calc(var(--u) * 1.6);background:#2e2e2e;border:calc(var(--u) * .8) solid #111;border-radius:calc(var(--u) * 1.2);box-shadow:0 calc(var(--u) * 1.4) 0 #111}
+.rc::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(var(--u) * 2.2);background:#4a4a4a;border-bottom:calc(var(--u) * .5) solid #111}
+.rc i{flex:1;border:calc(var(--u) * .5) solid #111;border-radius:calc(var(--u) * .8);background:#383838}
+/* 고르는 물건 */
+.ro{position:absolute;bottom:calc(var(--u) * 33.4);display:block;padding:0;margin:0;border:0;background:none;cursor:pointer;pointer-events:auto;color:#111;font:inherit;-webkit-tap-highlight-color:transparent}
+.ro.game{left:calc(var(--u) * -56);width:calc(var(--u) * 46)}
+.ro.anime{left:calc(var(--u) * 2);width:calc(var(--u) * 52)}
+.ro-plate{position:absolute;inset:calc(var(--u) * -2);border-radius:calc(var(--u) * 2.4);background:#FFD400;box-shadow:0 0 0 4px #111;opacity:0;scale:.94;transition:opacity 110ms,scale 200ms cubic-bezier(.34,1.56,.64,1)}
+.ro-svg,.ro-tv{position:relative;display:block;width:100%;transition:translate 200ms cubic-bezier(.34,1.56,.64,1)}
+.ro-cart{transition:translate 200ms cubic-bezier(.34,1.56,.64,1)}
+.ro-led{fill:#777;transition:fill 100ms}
+.ro-tv{aspect-ratio:52/40;display:flex;flex-direction:column;padding:calc(var(--u) * 2.2) calc(var(--u) * 2.2) 0;background:#ececec;border:calc(var(--u) * .9) solid #111;border-radius:calc(var(--u) * 3)}
+.ro-scr{position:relative;flex:1;overflow:hidden;background:#0b0b0b;border:calc(var(--u) * .6) solid #111;border-radius:calc(var(--u) * 3.4)/calc(var(--u) * 4.4)}
+.ro-scr canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
+.ro-scr i{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,0) 38%),radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55))}
+.ro-tvb{flex:none;display:flex;align-items:center;gap:calc(var(--u) * 1.2);height:calc(var(--u) * 5.4);padding:0 calc(var(--u) * .4)}
+.ro-tvb i{width:calc(var(--u) * 2.2);height:calc(var(--u) * 2.2);border-radius:50%;background:#fff;border:calc(var(--u) * .5) solid #111}
+.ro-tvb b{margin-left:auto;font:400 calc(var(--u) * 1.6)/1 RetroPx,monospace;letter-spacing:.2em;color:#777}
+.ro:hover .ro-plate,.ro:focus-visible .ro-plate{opacity:1;scale:1}
+.ro:hover .ro-svg,.ro:hover .ro-tv,.ro:focus-visible .ro-svg,.ro:focus-visible .ro-tv{translate:0 calc(var(--u) * -1)}
+.ro:hover .ro-cart,.ro:focus-visible .ro-cart{translate:0 -6px}
+.ro:hover .ro-led,.ro:focus-visible .ro-led{fill:#FFD400}
+.ro:focus{outline:none}
+.ro:active .ro-plate{scale:.97}
+/* 앞 소품 */
+.rf-plant,.rf-pad,.rf-lamp{position:absolute;display:block}
+.rf-plant{left:calc(var(--u) * -106);bottom:calc(var(--u) * -2);width:calc(var(--u) * 24)}
+.rf-pad{left:calc(var(--u) * -34);bottom:calc(var(--u) * 1.4);width:calc(var(--u) * 17);rotate:-8deg}
+.rf-lamp{left:calc(var(--u) * 80);bottom:calc(var(--u) * -1);width:calc(var(--u) * 22)}
+/* 문틀(걸어 들어올 때만): 어두운 복도 벽에 뚫린 문 */
+.rm-doorl{pointer-events:none}
+.rm-door{position:absolute;left:50%;top:48%;width:66vw;height:88vh;translate:-50% -50%;border:2.6vh solid #111;border-bottom:0;box-shadow:0 0 0 300vmax #262626;border-radius:6px 6px 0 0}
+.rm-door::after{content:"";position:absolute;right:calc(100% + 4vh);top:42%;width:2.4vh;height:4vh;border-radius:3px;background:#e8e8e8;border:3px solid #111} /* 복도 스위치 */
+/* 방 위 얇은 글·단추 */
+.rm-ui{position:absolute;left:14px;right:14px;top:max(12px,2vh);display:flex;justify-content:space-between;z-index:4;pointer-events:none}
+.rm-ui > *{pointer-events:auto}
+.room2 .mr-btn.mute{margin-left:0;padding:0 10px}
+.room2.walk .rm-ui{opacity:0}
+/* 창 */
+.rm-dim{position:absolute;inset:0;z-index:10;background:rgba(12,12,12,.62);opacity:0;pointer-events:none}
+.room2.win .rm-dim{pointer-events:auto}
+.room2.reduce.win .rm-dim{opacity:1}
+.mw.mr-mon{position:absolute;inset:max(12px,2.2vh) max(16px,2.6vw);z-index:12;flex:none;display:flex;flex-direction:column;padding:8px 10px 10px;opacity:0}
+.mw[hidden]{display:none}
+.room2.reduce .mw{opacity:1}
+.mw-bar{flex:none;display:flex;align-items:center;gap:10px;height:46px;padding:0 2px 8px}
+.mw-bar .sp{flex:1}
+.mw-t{display:inline-flex;align-items:center;gap:10px}
+.mw-t svg{width:62px;height:30px;overflow:visible}
+.mw-t b{font:400 20px/1 RetroPx,monospace}
+.mw-x{background:#FFD400}
+.mw .mr-snow{opacity:0}
+/* 화면 안: 정렬 · 규칙 줄 · 묶음 머리(붙어 있음) */
+.mr-sort{grid-area:sort;align-items:center}
+.mr-sort em{font:800 12px/1 var(--body);font-style:normal;color:#9a9a9a;margin-right:2px}
+.mr-rule{margin:0 0 12px;font:600 12.5px/1.5 var(--body);color:#a9a9a9;word-break:keep-all}
+.mr-rule b{color:#FFD400;margin-right:6px}
+.mr-sh{position:sticky;top:-12px;z-index:2;display:flex;align-items:center;gap:10px;margin:0 -16px 8px;padding:8px 16px 6px;background:#141414}
+.mr-sh .mr-tag{margin:0}
+.mr-shn{font:700 12px/1 var(--body);color:#8a8a8a}
+@media (max-height:700px){ .mw-bar{height:40px;padding-bottom:6px} .mw-t b{font-size:17px} .mw.mr-mon{padding:6px 8px 8px}  }
+/* ===== v5.3 방: 낮/밤 · 자리 바꿈(가운데 TV · 왼쪽 비디오테이프 · 오른쪽 게임기) · 글 없는 방 ===== */
+.ro.anime.tv{left:calc(var(--u) * -26);width:calc(var(--u) * 52)}
+.ro.anime.tape{left:calc(var(--u) * -47);width:calc(var(--u) * 16)}
+.ro.game{left:calc(var(--u) * 32);width:calc(var(--u) * 44)}
+.rc{left:calc(var(--u) * -56);width:calc(var(--u) * 140)}
+.ro.tape .ro-plate{inset:calc(var(--u) * -1.6)}
+.ro-tp1{transition:translate 200ms cubic-bezier(.34,1.56,.64,1)}
+.ro.tape:hover .ro-tp1,.ro.tape:focus-visible .ro-tp1{translate:0 -5px}
+/* 테이프든 TV 든 올리면 둘 다 노란 판(같은 입구라는 표시) */
+.rm-pl:has(.ro.anime:hover) .ro.anime .ro-plate{opacity:1;scale:1}
+.rm-pl:has(.ro.tape:hover) .ro.tv .ro-tv{translate:0 calc(var(--u) * -1)}
+/* 이름표: 올리거나 포커스 했을 때만. 평소엔 아무 글자도 없음 */
+.ro-tip{position:absolute;left:50%;bottom:calc(100% + var(--u) * 2.4);translate:-50% 4px;padding:7px 11px;border-radius:8px;background:#111;color:#fff;white-space:nowrap;
+  font:800 14px/1 var(--body);box-shadow:0 0 0 2.5px #FFD400;opacity:0;pointer-events:none;transition:opacity 110ms,translate 160ms cubic-bezier(.34,1.56,.64,1)}
+.ro:hover .ro-tip,.ro:focus-visible .ro-tip,.rm-pl:has(.ro.tape:hover) .ro.tv .ro-tip{opacity:1;translate:-50% 0}
+.reduce .ro-tip,.reduce .ro-plate,.reduce .ro-svg,.reduce .ro-tv,.reduce .ro-tp1,.reduce .ro-cart{transition:none}
+/* 벽 물건 자리 */
+.rw-poster{left:calc(50% - var(--u) * 80)}
+.rw-win{left:calc(50% - var(--u) * 122)}
+.rw-shelf{left:calc(50% + var(--u) * 46);bottom:calc(var(--u) * 70)}
+.rw-clock{left:calc(50% + var(--u) * 4);bottom:calc(var(--u) * 86)}
+.rw-glow{left:calc(50% + var(--u) * 72)}
+.rf-pad{left:calc(var(--u) * 52);rotate:10deg}
+.rf-lamp{left:calc(var(--u) * 96)}
+.rf-plant{left:calc(var(--u) * -118)}
+/* 낮: 벽 · 바닥이 한 단 밝고, 창은 해 · 구름, 스탠드는 꺼짐(불빛 없음) */
+.room2.day{background:#3a3a3a}
+.room2.day .rw::before{background:repeating-linear-gradient(90deg,#ececec 0 2px,#f7f7f7 2px 26px)}
+.room2.day .rw-floor{background:repeating-linear-gradient(90deg,#cdcdcd 0 3px,#dadada 3px calc(var(--u) * 14))}
+/* 밤: 지금까지의 방에 아주 옅은 어둠 한 겹(물건은 그대로 또렷) */
+.room2.night .rw::after{content:"";position:absolute;inset:-120vh -150vw;background:rgba(20,20,30,.16);pointer-events:none}
+/* 창이 열려도 방 위 단추(집 · 소리)는 보이고 눌림: 어둠 · 창보다 위, 창은 그만큼 아래서 시작 */
+.rm-ui{z-index:14}
+.room2.win .rm-ui .mr-btn{box-shadow:0 0 0 2px #FFD400}
+.mw.mr-mon{inset:60px max(16px,2.6vw) max(12px,2.2vh)}
+@media (max-height:700px){ .mw.mr-mon{inset:52px max(16px,2.6vw) 10px} }
+/* ===== v5.4 방: 누를 수 있는 물건 표시(가만히 있는 모서리 표시 + 밑의 노란 받침) · 새 게임기 · 창 열림 때 홈 숨김 ===== */
+.ro.game{left:calc(var(--u) * 32);width:calc(var(--u) * 52)}
+.rc{width:calc(var(--u) * 146)}
+.ro-mk{position:absolute;inset:calc(var(--u) * -3.2);pointer-events:none;transition:scale 200ms cubic-bezier(.34,1.56,.64,1)}
+.ro-mk i{position:absolute;width:calc(var(--u) * 3.6);height:calc(var(--u) * 3.6);border:0 solid #111}
+.ro-mk i::after{content:"";position:absolute;inset:calc(var(--u) * .45);border:0 solid #FFD400}
+.ro-mk i:nth-child(1){left:0;top:0;border-width:calc(var(--u) * 1.3) 0 0 calc(var(--u) * 1.3);border-top-left-radius:calc(var(--u) * 1.2)}
+.ro-mk i:nth-child(2){right:0;top:0;border-width:calc(var(--u) * 1.3) calc(var(--u) * 1.3) 0 0;border-top-right-radius:calc(var(--u) * 1.2)}
+.ro-mk i:nth-child(3){left:0;bottom:0;border-width:0 0 calc(var(--u) * 1.3) calc(var(--u) * 1.3);border-bottom-left-radius:calc(var(--u) * 1.2)}
+.ro-mk i:nth-child(4){right:0;bottom:0;border-width:0 calc(var(--u) * 1.3) calc(var(--u) * 1.3) 0;border-bottom-right-radius:calc(var(--u) * 1.2)}
+.ro-mk i::after{inset:calc(var(--u) * -.85)}
+.ro-mk i:nth-child(1)::after{border-width:calc(var(--u) * .45) 0 0 calc(var(--u) * .45);border-top-left-radius:calc(var(--u) * .6)}
+.ro-mk i:nth-child(2)::after{border-width:calc(var(--u) * .45) calc(var(--u) * .45) 0 0;border-top-right-radius:calc(var(--u) * .6)}
+.ro-mk i:nth-child(3)::after{border-width:0 0 calc(var(--u) * .45) calc(var(--u) * .45);border-bottom-left-radius:calc(var(--u) * .6)}
+.ro-mk i:nth-child(4)::after{border-width:0 calc(var(--u) * .45) calc(var(--u) * .45) 0;border-bottom-right-radius:calc(var(--u) * .6)}
+/* 밑 받침: 물건이 올라앉은 노란 깔개(가만히) */
+.ro::after{content:"";position:absolute;left:4%;right:4%;bottom:calc(var(--u) * -1.3);height:calc(var(--u) * 1.3);border-radius:calc(var(--u) * .6);background:#FFD400;box-shadow:0 0 0 calc(var(--u) * .35) #111}
+.room2.walk .ro-mk{opacity:0}
+.ro:hover .ro-mk,.ro:focus-visible .ro-mk,.rm-pl:has(.ro.anime:hover) .ro.anime .ro-mk{scale:1.05}
+.ro:hover .ro-svg,.ro:hover .ro-tv,.ro:focus-visible .ro-svg,.ro:focus-visible .ro-tv{translate:0 calc(var(--u) * -1.6)}
+.ro:hover .ro-padc,.ro:focus-visible .ro-padc{translate:0 -3px}
+.ro-padc{transition:translate 200ms cubic-bezier(.34,1.56,.64,1)}
+.reduce .ro-mk{transition:none}
+/* 창이 열리면: 홈 단추는 숨김(나가기는 창의 '← 방으로' 하나), 소리 단추는 창 오른쪽 끝선에 맞춰 창 위 띠 가운데 */
+.room2.win .mr-homebtn{visibility:hidden}
+.room2.win .rm-ui{right:max(16px,2.6vw);top:13px}
+.room2.win .rm-ui .mr-btn{box-shadow:none}
+@media (max-height:700px){ .room2.win .rm-ui{top:9px} }
+.ro-mk{inset:calc(var(--u) * -2.6)}
+.ro.anime.tape{left:calc(var(--u) * -50)}
+.ro.tape .ro-mk{inset:calc(var(--u) * -2)}
+.ro.game{left:calc(var(--u) * 34)}
+.rc{left:calc(var(--u) * -58);width:calc(var(--u) * 150)}
+.ro-plate.ro-fl{scale:1;transition:none} .ro:hover .ro-fl{opacity:0!important}
+/* ===== v5.5 방 단추(홈 · 소리) 크고 또렷하게, 창 열리면 둘 다 사라짐 · 창은 화면 거의 전부(고른 작은 여백) ===== */
+.rm-ui{left:16px;right:16px;top:14px}
+.rm-ui .mr-btn{height:50px;padding:0 18px 0 14px;gap:9px;border-radius:14px;box-shadow:4px 4px 0 #111;font:800 17px/1 var(--body);transition:background 120ms,color 120ms,translate 100ms,box-shadow 100ms}
+.rm-ui .mr-btn svg{width:22px;height:22px;stroke-width:2.6}
+.rm-ui .mr-btn kbd{font-size:12px;padding:4px 6px}
+.room2 .rm-ui .mr-btn.mute{width:50px;padding:0;justify-content:center}
+.room2 .rm-ui .mr-btn.mute svg{width:24px;height:24px}
+.rm-ui .mr-btn:active{translate:3px 3px;box-shadow:1px 1px 0 #111}
+@media (hover:hover) and (pointer:fine){ .rm-ui .mr-btn:hover{background:#FFD400} }
+@media (max-height:700px){ .rm-ui .mr-btn{height:46px} .room2 .rm-ui .mr-btn.mute{width:46px} }
+.room2.win .rm-ui{visibility:hidden}
+.mw.mr-mon,.room2 .mw.mr-mon{inset:max(10px,1.4vh) max(10px,1.4vh)}
+@media (max-height:700px){ .mw.mr-mon,.room2 .mw.mr-mon{inset:8px} }
+.mw-bar{height:54px;padding:0 2px 8px 4px}
+.mw-x{height:44px;padding:0 16px 0 14px;gap:10px;border-radius:12px;font:800 16px/1 var(--body);box-shadow:4px 4px 0 #111;transition:background 120ms,color 120ms,translate 100ms,box-shadow 100ms}
+.mw-x kbd{font-size:12px;padding:4px 6px}
+.mw-x:active{translate:3px 3px;box-shadow:1px 1px 0 #111}
+@media (hover:hover) and (pointer:fine){ .mw-x:hover{background:#111;color:#fff} .mw-x:hover kbd{background:#FFD400;color:#111;border-color:#FFD400} }
+@media (max-height:700px){ .mw-bar{height:50px;padding-bottom:6px} .mw-x{height:40px} }
+/* v5.8 고개 돌리기 전환: 움직이는 동안 스크롤 막대 없음 · 받는 판 그늘(깊이) */
+html.panning,html.panning body{overflow:hidden}
+.room2 .rm-shade{position:absolute;inset:0;z-index:5;background:#000;opacity:0;pointer-events:none}
+.room2 .rm-doorl{display:none}
+.room2.walk{backface-visibility:hidden}

@@ -1,0 +1,73 @@
+const puppeteer=require('puppeteer-core');
+const [,,W,H,tag,dpr,rm]=process.argv; const base='http://localhost:8766/'; const S='/workspace/rhythm/shots/';
+const sl=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{
+ const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox','--hide-scrollbars','--autoplay-policy=no-user-gesture-required']});
+ const p=await b.newPage(); const errs=[]; const res=[];
+ p.on('console',m=>{if(['error','warning'].includes(m.type()))errs.push(m.type()+': '+m.text())});
+ p.on('pageerror',e=>errs.push('pageerror: '+e.message));
+ p.on('response',r=>{if(r.status()>=400)errs.push(r.status()+' '+r.url())});
+ await p.setViewport({width:+W,height:+H,deviceScaleFactor:+(dpr||1)});
+ if(rm) await p.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);
+ const hash=()=>p.evaluate(()=>location.hash);
+ const chk=async(name,exp,extra)=>{const s=await hash(); const ok=s===exp&&(extra===undefined||extra); res.push(`${ok?'OK  ':'FAIL'} ${name}: ${s}`); };
+ const click=async sel=>{const e=await p.$(sel); if(!e){res.push('FAIL missing '+sel);return;} await e.evaluate(x=>x.scrollIntoView({block:'nearest'})); await sl(150); const bb=await e.boundingBox(); await p.mouse.click(bb.x+bb.width/2,bb.y+bb.height/2);};
+ const noScroll=()=>p.evaluate(()=>{const s=document.querySelector('.sheet-scroll'); return s? s.scrollHeight-s.clientHeight : -1});
+ await p.goto(base,{waitUntil:'networkidle0'}); await sl(1800);
+ await p.screenshot({path:S+`final45_${tag}_home.png`});
+ await click('.menu .mi'); await sl(1200); await chk('click 포트폴리오','#/portfolio');
+ res.push(`     list overflow px: ${await noScroll()}`);
+ const fv=await p.evaluate(()=>{const r=s=>document.querySelector(s).getBoundingClientRect(); const sc=document.querySelector('.sheet-scroll').getBoundingClientRect(); const all=[...document.querySelectorAll('.wk-top .wk-card')].map(e=>e.getBoundingClientRect()); return {ok:all.every(b=>b.bottom<=innerHeight-4&&b.top>=0&&b.right<=sc.right),hero:Math.round(all[0].width)+'x'+Math.round(all[0].height),sec:Math.round(all[1].width)+'x'+Math.round(all[1].height),bottom:Math.round(Math.max(...all.map(b=>b.bottom))),vh:innerHeight,areaRatio:+((all[0].width*all[0].height)/(all[1].width*all[1].height)).toFixed(2)}});
+ res.push(`${fv.ok?'OK  ':'FAIL'} first view: hero + 2 secondaries fully visible ${JSON.stringify(fv)}`);
+ await p.screenshot({path:S+`final45_${tag}_list.png`});
+ await click('.wk-top li:nth-child(1) .wk-card'); await sl(1000); await chk('hero → detail','#/portfolio/battle'); await p.screenshot({path:S+`final45_${tag}_detail.png`}); await p.keyboard.press('Escape'); await sl(900);
+ await click('.wk-top li:nth-child(2) .wk-card'); await sl(1000); await chk('card → detail','#/portfolio/pico-bang');
+ const foc=await p.evaluate(()=>document.activeElement?.className||''); res.push(`     focus on detail: ${foc}`);
+ await p.goBack(); await sl(900); await chk('browser back → list','#/portfolio');
+ const foc2=await p.evaluate(()=>document.activeElement?.textContent?.slice(0,12)||''); res.push(`     focus after back: ${foc2}`);
+ await p.goForward(); await sl(900); await chk('browser forward → detail','#/portfolio/pico-bang');
+ const nx=await p.$$('.sk-top .pill'); await nx[2].click(); await sl(900); await chk('next project','#/portfolio/ai-review');
+ await p.keyboard.press('Escape'); await sl(900); await chk('Esc detail → list','#/portfolio');
+ await click('.wk-links li:nth-child(2) .wk-card .pf-hit'); await sl(1000); await chk('team card → detail','#/portfolio/digreed');
+ await p.keyboard.press('Escape'); await sl(900); await click('.wk-ter .wk-card'); await sl(1000); await chk('도로시아 strip → detail','#/portfolio/dorothia');
+ await p.keyboard.press('Escape'); await sl(900); await p.keyboard.press('Escape'); await sl(1100); await chk('Esc list → home','');
+ // calm check: sample transforms/shadows on content pages
+ for(const v of ['portfolio','resume','cover']){ await p.goto(base+'#/'+v,{waitUntil:'networkidle0'}); await sl(1500);
+   const sig=async()=>p.evaluate(()=>{const sh=document.querySelector('.sheet'); return [...sh.querySelectorAll('*')].slice(0,400).map(e=>{const c=getComputedStyle(e);return c.transform+c.boxShadow+c.opacity+c.backgroundSize}).join('|')+document.querySelector('.rail')?.getAttribute('style')+getComputedStyle(document.querySelector('.rail')||document.body).boxShadow});
+   const a=await sig(); await sl(230); const b2=await sig(); await sl(190); const c=await sig();
+   res.push(`${a===b2&&b2===c?'OK  ':'FAIL'} calm ${v} (idle styles static over 420ms)`); 
+   if(v!=='portfolio'){ res.push(`     ${v} overflow px: ${await noScroll()}`); await p.screenshot({path:S+`final45_${tag}_${v}.png`}); } }
+ // media room (one page, two inputs)
+ const mr=()=>p.evaluate(()=>{const m=document.querySelector('.mr');if(!m)return null;return {ready:m.classList.contains('ready'),ch:m.classList.contains('anime')?'anime':'game',count:document.querySelector('.mr-count .sr')?.textContent,items:document.querySelectorAll('.mr-sec:last-of-type .mr-it').length,strip:document.querySelectorAll('.mr-strip .mr-it').length,imgs:[...document.querySelectorAll('.mr-it img')].filter(i=>i.complete&&i.naturalWidth).length}});
+ await p.goto(base,{waitUntil:'networkidle0'}); await sl(1800);
+ await click('.tile[href="#/media?ch=game"]'); await sl(1600); let m=await mr(); await chk('tile 게임 → media game','#/media?ch=game', m&&m.ready&&m.ch==='game');
+ const fav=await p.evaluate(()=>[...document.querySelectorAll('.mr-sec:first-of-type .mr-it')].map(e=>e.getAttribute('aria-label').split(',')[0])); res.push(`${fav.length===8?'OK  ':'FAIL'} game 최애 ${fav.length}: ${fav.join(' / ')}`);
+ await p.screenshot({path:S+`final45_${tag}_media_game.png`});
+ res.push('     '+JSON.stringify(m)); await sl(600); m=await mr(); res.push(`${m.items===353&&m.strip===8?'OK  ':'FAIL'} game grid all items: ${m.items} + 최애 ${m.strip}, imgs loaded ${m.imgs}`);
+ await p.screenshot({path:S+`final45_${tag}_media_game.png`});
+ await p.keyboard.press('2'); await sl(900); m=await mr(); await chk('key 2 → TV input (same page)','#/media?ch=anime', m.ch==='anime'&&m.items===393&&m.strip===13); res.push('     '+JSON.stringify(m));
+ await p.screenshot({path:S+`final45_${tag}_media_anime.png`});
+ const hl=await p.evaluate(()=>history.length); 
+ await click('.mr-in[data-ch="game"]'); await sl(900); await chk('click GAME input','#/media?ch=game', (await p.evaluate(()=>history.length))===hl);
+ // filters
+ const seg=await p.$$('.mr-seg button'); await seg[3].click(); await sl(500); m=await mr(); res.push(`${/171/.test(m.count)?'OK  ':'FAIL'} filter 콘솔: ${m.count} items ${m.items}`);
+ const chips=await p.$$('.mr-chips button'); await chips[1].click(); await sl(600); m=await mr(); res.push(`     filter 콘솔+RPG: ${m.count}`);
+ await p.screenshot({path:S+`final45_${tag}_media_filter.png`});
+ await p.focus('.mr-body'); await sl(100); await p.keyboard.press('ArrowRight'); await p.keyboard.press('ArrowDown'); await sl(300);
+ const fe=await p.evaluate(()=>document.activeElement?.getAttribute('aria-label')); res.push(`${fe?'OK  ':'FAIL'} roving focus in grid: ${fe}`);
+ await p.screenshot({path:S+`final45_${tag}_media_focus.png`});
+ await p.keyboard.press('Escape'); await sl(1100); await chk('Esc media → home',''); 
+ const tf=await p.evaluate(()=>document.activeElement?.getAttribute('href')); res.push(`     focus after media: ${tf}`);
+ await click('.tile[href="#/media?ch=anime"]'); await sl(1700); m=await mr(); await chk('tile 애니 → same page, TV input','#/media?ch=anime', m&&m.ch==='anime');
+ await p.goBack(); await sl(1100); await chk('browser back media → home','');
+ for(const [h,exp] of [['#/games','#/media?ch=game'],['#/anime','#/media?ch=anime'],['#play-history','#/media?ch=game'],['#anime-history','#/media?ch=anime']]){ await p.goto(base+h,{waitUntil:'networkidle0'}); await sl(900); await chk('redirect '+h,exp); }
+ await p.goto(base+'#/media?ch=anime',{waitUntil:'networkidle0'}); await sl(150); await p.mouse.click(W/2,H/2); await sl(250); m=await mr(); res.push(`${m.ready?'OK  ':'FAIL'} click skips entrance`);
+ await click('.mr-homebtn'); await sl(1100); await chk('홈 button → home','');
+ await p.goto(base+'#/resume',{waitUntil:'networkidle0'}); await sl(900); await p.keyboard.press('Escape'); await sl(1100); await chk('deep resume Esc → home','');
+ await p.keyboard.press('Space'); await sl(1200); const playing=await p.evaluate(()=>document.querySelector('.world').classList.contains('playing')); res.push((playing?'OK  ':'FAIL')+' Space → play');
+ await p.keyboard.press('Escape'); await sl(900);
+ await p.goto(base+'#/portfolio',{waitUntil:'networkidle0'}); await sl(900);
+ const g=await p.evaluate(()=>{const q=s=>document.querySelector(s).getBoundingClientRect(); const sc=q('.sheet-scroll'),c=q('.contact'),h=q('.rail-home'); const mis=[...document.querySelectorAll('.menu .mi')].map(e=>Math.round(e.getBoundingClientRect().right)); return {sheetLeft:Math.round(sc.left), menuRight:Math.max(...mis), homeTop:Math.round(h.top), contactBottom:Math.round(c.bottom), vh:innerHeight}});
+ res.push('rail geom '+JSON.stringify(g));
+ console.log(res.join('\n')); console.log(errs.length?errs.join('\n'):'no console errors'); await b.close();
+})().catch(e=>{console.error('FAIL',e.message);process.exit(1)});

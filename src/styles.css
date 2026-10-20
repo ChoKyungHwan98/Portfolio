@@ -1,0 +1,244 @@
+/* 흑백 리듬천국 홈 v2
+   기울기 언어 -3deg 하나 (직무 태그 · 선택 띠 · 플레이 · 튜토리얼 제목).
+   v3.1: 기준선 x=80s 하나(정체성·띠·타일 왼쪽 끝). 머리줄은 화면 위 44s, 아래 줄은 화면 아래 72s 에 붙이고 메뉴는 그 사이 가운데 */
+:root{
+  --u:min(calc(100vw/1920),calc(100vh/1080));
+  /* v3.1: 글자·버튼 크기 단위는 무대 단위(u)를 따르되 0.9px 에서 멈춤 → 1920·2560 에서도 부풀지 않음 */
+  --s:min(var(--u),.9px);
+  --padX:calc((100vw - 1920*var(--u))/2); --padY:calc((100vh - 1080*var(--u))/2);
+  --k0:#0a0a0a; --k1:#141414; --k2:#1f1f1f; --k3:#2c2c2c; --k4:#3a3a3a;
+  --ink:#111; --paper:#fff; --wall:#fbfbfb; --tile:#f3f3f3; --floorA:#e4e4e4; --floorB:#f7f7f7; --cast:#d9d9d9; --side:#cfcfcf; --drop:#2f2f2f;
+  --txt2:#c8c8c8; --txt3:#a3a3a3;
+  --display:"Black Han Sans","Gothic A1",sans-serif; --body:"Gothic A1","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --bx:56;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body,#root{height:100%;margin:0}
+body{overflow:hidden;font-family:var(--body);color:var(--ink);-webkit-font-smoothing:antialiased;background:var(--wall)}
+button{font:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.abs{position:absolute;margin:0}
+a:focus-visible,button:focus-visible,[role=slider]:focus-visible{outline:3px solid var(--paper);outline-offset:4px}
+
+.world{position:fixed;inset:0;overflow:hidden;
+  background:var(--wall);background-image:linear-gradient(45deg,var(--tile) 25%,transparent 25%,transparent 75%,var(--tile) 75%),linear-gradient(45deg,var(--tile) 25%,transparent 25%,transparent 75%,var(--tile) 75%);
+  background-size:calc(120*var(--u)) calc(120*var(--u));background-position:0 0,calc(60*var(--u)) calc(60*var(--u))}
+.floor{position:absolute;left:-60vw;right:-60vw;bottom:0;height:calc(1100*var(--u) + var(--padY));transform-origin:50% 100%;transform:perspective(calc(1100*var(--u))) rotateX(58deg);
+  background:linear-gradient(0deg,transparent 0%,transparent 45%,var(--wall) 100%),conic-gradient(var(--floorA) 25%,var(--floorB) 0 50%,var(--floorA) 0 75%,var(--floorB) 0) 0 0/calc(180*var(--u)) calc(180*var(--u))}
+.stage{position:absolute;left:50%;top:50%;width:calc(1920*var(--u));height:calc(1080*var(--u));transform:translate(-50%,-50%)}
+.stage-top{position:fixed;z-index:30;pointer-events:none}
+.stage-top > *{pointer-events:auto}
+
+/* 사선 면 (v3.6: 1120→1180 으로 넓힘. 위 꼭짓점 비율을 58→60.17% 로 바꿔 기울기(아래로 470 넓어짐)는 그대로) */
+.plane{position:absolute;inset:0;pointer-events:none}
+/* v4.0 상자는 모양보다 200px 넓게: 모양은 clip-path(App planeClip, 절대 px)가 정하고, 스프링이 홈 모양을 넘어 출렁일 때 상자 끝에서 잘려 옆면과 벌어지던 것 방지 */
+.panel,.panel-cast{position:absolute;left:calc(-1*var(--padX));top:calc(-1*var(--padY));height:calc(1080*var(--u) + 2*var(--padY));width:calc(1180*var(--u) + var(--padX) + 200px);clip-path:polygon(0 0,calc(60.17% - 120px) 0,calc(100% - 200px) 100%,0 100%)}
+.panel{background:var(--k2) linear-gradient(118deg,var(--k0) 0%,var(--k1) 52%,var(--k2) 100%) 0 0/calc(100% - 200px) 100% no-repeat;overflow:hidden}
+.panel::after{content:"";position:absolute;inset:0;opacity:.07;mix-blend-mode:screen;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.panel-cast{background:var(--cast);translate:calc(46*var(--u)) calc(34*var(--u))}
+/* 만화 스크린톤: 넓어진 아래쪽에서 사선 쪽으로 번지는 망점 (Magic UI DotPattern · React Bits HalftoneReveal 원리, 정지 상태) */
+.tone{position:absolute;left:calc(var(--padX) + 440*var(--u));top:calc(var(--padY) + 520*var(--u));width:calc(820*var(--u));height:calc(600*var(--u));
+  background:radial-gradient(circle,#2e2e2e 0 calc(3.6*var(--u)),transparent calc(3.9*var(--u))) 0 0/calc(18*var(--u)) calc(18*var(--u));
+  -webkit-mask-image:radial-gradient(ellipse 80% 75% at 92% 96%,#000 0%,rgba(0,0,0,.55) 45%,transparent 75%);mask-image:radial-gradient(ellipse 80% 75% at 92% 96%,#000 0%,rgba(0,0,0,.55) 45%,transparent 75%)}
+
+/* 머리줄: 왼쪽 정체성(로고 자리) · 오른쪽 연락처. 기준선 x=96, 위 여백 56 */
+.brand{left:calc(var(--bx)*var(--s));top:calc(44*var(--s) - var(--padY));display:flex;align-items:center;gap:calc(14*var(--s));white-space:nowrap}
+.brand-name{margin:0;font-family:var(--display);font-weight:400;font-size:calc(34*var(--s));line-height:1;color:var(--paper);letter-spacing:-.01em;padding-top:calc(3*var(--s));
+  text-shadow:0 calc(2*var(--s)) 0 var(--k4)}
+.brand-name .ch{display:inline-block}
+.brand-rule{width:2px;height:calc(22*var(--s));background:var(--k4);rotate:14deg}
+.brand-role{margin:0;font-size:max(12.5px,calc(17*var(--s)));font-weight:800;color:#bdbdbd;letter-spacing:.01em;line-height:1;padding-top:calc(3*var(--s))}
+/* 바닥줄(왼쪽 기둥 안): 연락처. 타일·띠·정체성과 같은 왼쪽 기준선 */
+.contact{left:calc(var(--bx)*var(--s));bottom:calc(64*var(--s) - var(--padY));display:flex;gap:calc(12*var(--s))}
+.chip{position:relative;display:inline-flex;align-items:center;gap:calc(9*var(--s));height:calc(40*var(--s));padding:0 calc(18*var(--s));background:var(--k1);color:#e6e6e6;text-decoration:none;cursor:pointer;
+  border:max(2px,calc(2.5*var(--s))) solid var(--k4);border-radius:calc(19*var(--s));box-shadow:0 calc(4*var(--s)) 0 var(--k3);font-size:max(12px,calc(15*var(--s)));font-weight:800;line-height:1;font-variant-numeric:tabular-nums;
+  transition:translate 140ms cubic-bezier(.23,1,.32,1),box-shadow 140ms cubic-bezier(.23,1,.32,1)}
+.chip svg{width:calc(16*var(--s));height:calc(16*var(--s));fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chip:active{translate:0 calc(3*var(--s));box-shadow:0 calc(1*var(--s)) 0 var(--k3)}
+.chip:focus-visible{outline-color:var(--paper)}
+.tip{position:absolute;left:50%;bottom:calc(100% + 12*var(--s));translate:-50% 0;padding:calc(8*var(--s)) calc(14*var(--s)) calc(7*var(--s));background:var(--paper);color:var(--ink);border-radius:calc(12*var(--s));font-size:max(12px,calc(15*var(--s)));font-weight:800;white-space:nowrap;pointer-events:none}
+.tip::before{content:"";position:absolute;left:50%;bottom:calc(-6*var(--s));translate:-50% 0;border:calc(7*var(--s)) solid transparent;border-bottom:0;border-top-color:var(--paper)}
+
+/* 메뉴: 화면 왼쪽 면을 채우는 큰 낱말 3개 + 흰 기울어진 띠가 고른 낱말로 미끄러짐
+   (Motion Primitives AnimatedBackground / Aceternity Hover Effect 원리: 공유 레이아웃 띠) */
+.menu{left:calc(var(--bx)*var(--s));top:calc(50% - 116*var(--s));translate:0 -50%;display:flex;flex-direction:column;align-items:flex-start;gap:calc(28*var(--s))}
+.mi{position:relative;display:flex;align-items:center;height:calc(176*var(--s));padding:calc(6*var(--s)) calc(52*var(--s)) 0;
+  color:var(--paper);text-decoration:none;font-family:var(--display);font-size:calc(104*var(--s));line-height:1;outline:none;transition:color 90ms ease 60ms}
+/* v3.9 띠가 미끄러지는 동안 글자색이 먼저 바뀌어 흰 띠 위 흰 글자(안 보임)가 되던 것: 띠가 절반쯤 왔을 때(60ms 뒤) 바꿈 */
+.mi.on{color:var(--ink)}
+.mi-label{position:relative;z-index:1;text-shadow:0 calc(4*var(--s)) 0 var(--k3),0 calc(7*var(--s)) 0 var(--k3);transition:text-shadow 90ms 60ms}
+.mi.on .mi-label{text-shadow:0 calc(3*var(--s)) 0 #d2d2d2}
+.band{position:absolute;inset:0;z-index:0;border-radius:calc(28*var(--s));background:linear-gradient(180deg,#fff 0%,#fff 55%,#ededed 100%);
+  box-shadow:0 calc(7*var(--s)) 0 var(--side),calc(10*var(--s)) calc(15*var(--s)) 0 var(--drop)}
+.band::before{content:"";position:absolute;inset:calc(9*var(--s));border:max(3px,calc(4.5*var(--s))) solid var(--ink);border-radius:calc(20*var(--s))}
+.mi:focus-visible .band{outline:calc(4*var(--s)) solid var(--paper);outline-offset:calc(8*var(--s))}
+.roll{position:relative;display:inline-block;overflow:hidden;line-height:1.08;vertical-align:top}
+.roll-row{display:block;white-space:nowrap}
+.roll-row.r1{position:absolute;left:0;top:100%}
+.roll-ch{display:inline-block;white-space:pre}
+
+/* 아래 줄: 이력 타일 2개 + 플레이 */
+.tiles{left:calc(var(--bx)*var(--s));bottom:calc(150*var(--s) - var(--padY));display:flex;gap:calc(18*var(--s))}
+.tile{position:relative;overflow:hidden;width:calc(212*var(--s));height:calc(132*var(--s));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(14*var(--s));padding-top:calc(4*var(--s));
+  background:var(--k2);color:#ededed;text-decoration:none;border-radius:calc(22*var(--s));box-shadow:inset 0 0 0 max(2px,calc(2.5*var(--s))) var(--k4),0 calc(6*var(--s)) 0 var(--k3);
+  font-size:max(10.5px,calc(17*var(--s)));font-weight:800;line-height:1;letter-spacing:-.01em;white-space:nowrap;transition:translate 150ms cubic-bezier(.23,1,.32,1),box-shadow 150ms,color 150ms}
+.tile svg{position:relative;width:calc(52*var(--s));height:calc(52*var(--s));fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transition:transform 220ms cubic-bezier(.34,1.56,.64,1)}
+.tile-label{position:relative}
+.tile-light{position:absolute;inset:0;opacity:0;transition:opacity 200ms;background:radial-gradient(circle calc(130*var(--s)) at var(--mx,50%) var(--my,50%),rgba(255,255,255,.16),transparent 70%)}
+.tile:active{translate:0 calc(6*var(--s));box-shadow:inset 0 0 0 calc(3*var(--s)) var(--k4),0 calc(2*var(--s)) 0 var(--k3)}
+.play-wrap{left:calc((var(--bx) + 470)*var(--s));bottom:calc(150*var(--s) - var(--padY));width:calc(344*var(--s));height:calc(132*var(--s))}
+.mag{width:100%;height:100%}
+.play{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:calc(16*var(--s));padding:calc(4*var(--s)) 0 0;
+  background:linear-gradient(180deg,#fff 0%,#fff 55%,#ededed 100%);color:var(--ink);border:0;border-radius:calc(30*var(--s));cursor:pointer;
+  font-family:var(--display);font-size:calc(56*var(--s));line-height:1;rotate:-3deg;box-shadow:0 calc(7*var(--s)) 0 var(--side),calc(9*var(--s)) calc(15*var(--s)) 0 var(--drop)}
+.play::before{content:"";position:absolute;inset:calc(9*var(--s));border:max(3px,calc(4*var(--s))) solid var(--ink);border-radius:calc(21*var(--s))}
+.play i{width:0;height:0;border-left:calc(28*var(--s)) solid var(--ink);border-top:calc(18*var(--s)) solid transparent;border-bottom:calc(18*var(--s)) solid transparent;margin-top:calc(-3*var(--s))}
+.play:focus-visible{outline:calc(5*var(--s)) solid var(--paper);outline-offset:calc(10*var(--s))}
+@media (hover:hover) and (pointer:fine){
+  .tile:hover{color:var(--paper);box-shadow:inset 0 0 0 calc(3*var(--s)) #5a5a5a,0 calc(8*var(--s)) 0 var(--k3)}
+  .tile:hover .tile-light{opacity:1}
+  .tile:hover svg{transform:translateY(calc(-4*var(--s))) rotate(-6deg)}
+  .chip:hover{translate:0 calc(-2*var(--s));color:var(--paper);border-color:#5a5a5a;box-shadow:0 calc(6*var(--s)) 0 var(--k3)}
+}
+
+/* 바닥줄 */
+/* 머리줄 오른쪽: 조작 안내(옅게) */
+.keys{right:calc(80*var(--s));top:calc(48*var(--s) - var(--padY));display:flex;align-items:center;gap:calc(6*var(--s));font-size:max(11px,calc(14*var(--s)));font-weight:800;color:#8a8a8a;line-height:1} .home > .keys,.keys *{pointer-events:none} /* v4.1: 안내문이 1920에서 판 위쪽 버튼 클릭을 가로채던 문제 */
+.keys span{margin:0 calc(12*var(--s)) 0 calc(3*var(--s))} .keys span:last-child{margin-right:0}
+kbd{display:inline-grid;place-items:center;min-width:max(20px,calc(28*var(--s)));height:max(20px,calc(28*var(--s)));padding:calc(2*var(--s)) calc(8*var(--s)) 0;background:var(--paper);color:#555;border:max(1.5px,calc(2*var(--s))) solid #b5b5b5;border-radius:calc(8*var(--s));
+  box-shadow:0 2px 0 #b5b5b5;font:800 max(10.5px,calc(13*var(--s)))/1 var(--body)}
+
+/* 캐릭터 */
+.char-shadow{width:100%;height:100%;border-radius:50%;background:var(--cast)}
+.char-hop,.char-squash{position:absolute;left:0;top:0;transform-origin:0 0}
+.char-squash{transform-origin:0 0}
+
+/* 조명 */
+.lights{position:fixed;inset:0;z-index:20;pointer-events:none}
+.lights svg{position:absolute;inset:0;display:block}
+.dust{position:absolute;inset:0;width:100%;height:100%}
+/* v3.5 암전 두 장: "타" 에 왼쪽에서 사선 면 한 장, "당" 에 위에서 두 번째 면이 떨어진다 */
+.cut{position:absolute;inset:-12vh -30vw;background:#050505;will-change:transform}
+.cut-a{clip-path:polygon(0 0,100% 0,88% 100%,0 100%)}
+
+/* 튜토리얼 자리 */
+.tut{position:absolute;left:calc(640*var(--u));top:calc(230*var(--u));width:calc(920*var(--s))}
+.tut-title{position:relative;display:inline-block;margin:0 0 calc(30*var(--s));font-family:var(--display);font-weight:400;font-size:calc(104*var(--s));line-height:1;color:var(--paper);transform-origin:0 60%;
+  text-shadow:0 calc(3*var(--s)) 0 #9a9a9a,0 calc(6*var(--s)) 0 #6a6a6a,0 calc(9*var(--s)) 0 #3a3a3a}
+.tut-dots{position:absolute;left:calc(-30*var(--u));top:calc(-24*var(--u));right:calc(-60*var(--u));bottom:calc(-30*var(--u));z-index:-1;
+  background:radial-gradient(circle,#4a4a4a 0 calc(4*var(--u)),transparent calc(4.4*var(--u))) 0 0/calc(16*var(--u)) calc(16*var(--u));
+  -webkit-mask-image:radial-gradient(ellipse at 70% 60%,#000 20%,transparent 70%);mask-image:radial-gradient(ellipse at 70% 60%,#000 20%,transparent 70%)}
+.tut-frame{height:calc(400*var(--s));border:3px dashed #5c5c5c;border-radius:calc(26*var(--s));display:grid;place-items:center}
+.tut-tag{font-size:max(11px,calc(15*var(--s)));font-weight:800;letter-spacing:.32em;color:#8a8a8a}
+
+/* HUD */
+.hud{position:fixed;inset:0;z-index:40;pointer-events:none;--h:clamp(.55px,calc(100vmin/1200),.85px)}
+.hud-in > *{pointer-events:auto}
+.hud-back{position:absolute;left:calc(28*var(--h));top:calc(28*var(--h))}
+.back{display:flex;align-items:center;gap:calc(12*var(--h));height:calc(64*var(--h));padding:calc(3*var(--h)) calc(26*var(--h)) 0 calc(22*var(--h));background:var(--paper);color:var(--ink);
+  border:calc(5*var(--h)) solid var(--ink);border-radius:calc(20*var(--h));font-family:var(--display);font-size:calc(28*var(--h));line-height:1;cursor:pointer;box-shadow:calc(8*var(--h)) calc(10*var(--h)) 0 var(--drop)}
+.back i{width:0;height:0;border-right:calc(18*var(--h)) solid var(--ink);border-top:calc(12*var(--h)) solid transparent;border-bottom:calc(12*var(--h)) solid transparent;margin-top:calc(-3*var(--h))}
+.back:active{translate:calc(3*var(--h)) calc(5*var(--h));box-shadow:calc(4*var(--h)) calc(5*var(--h)) 0 var(--drop)}
+.back:focus-visible{outline-color:var(--ink)}
+.hud.dark .back{box-shadow:calc(8*var(--h)) calc(10*var(--h)) 0 #3a3a3a}
+.hud.dark .back:focus-visible{outline-color:var(--paper)}
+.beats{position:absolute;left:50%;top:calc(46*var(--h));translate:-50% 0;display:flex;gap:calc(14*var(--h));pointer-events:none}
+.beats span{width:calc(28*var(--h));height:calc(28*var(--h));border-radius:calc(8*var(--h));border:calc(5*var(--h)) solid var(--ink);background:var(--paper);transition:scale 160ms cubic-bezier(.23,1,.32,1)}
+.beats span.on{background:var(--ink);scale:1.25}
+.hud.dark .beats span{border-color:#d0d0d0;background:transparent}
+.hud.dark .beats span.on{background:var(--paper);border-color:var(--paper)}
+.hud-dial{position:absolute;right:calc(28*var(--h));top:calc(20*var(--h))}
+.dial{position:relative;width:calc(120*var(--h));height:calc(120*var(--h));user-select:none;-webkit-user-select:none;touch-action:none}
+.dial-disc{position:absolute;inset:0;border-radius:50%;background:var(--paper);border:calc(5*var(--h)) solid var(--ink);box-shadow:calc(8*var(--h)) calc(10*var(--h)) 0 var(--drop)}
+.hud.dark .dial-disc{box-shadow:calc(8*var(--h)) calc(10*var(--h)) 0 #3a3a3a}
+.dial svg{position:absolute;inset:0;width:100%;height:100%;cursor:grab;outline:none;border-radius:50%;overflow:visible}
+.dial[data-drag] svg{cursor:grabbing}
+.dial svg:focus-visible{outline:calc(4*var(--h)) solid var(--ink);outline-offset:calc(6*var(--h))}
+.hud.dark .dial svg:focus-visible{outline-color:var(--paper)}
+.dial path{fill:none;stroke-linecap:round} .dial .trk{stroke:#d6d6d6} .dial .lit,.dial .tail{stroke:var(--ink)} .dial .head{fill:var(--paper);stroke:var(--ink)}
+.dial-read{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;line-height:1}
+.dial-num{font-family:var(--display);font-size:calc(34*var(--h));color:var(--ink);padding-top:calc(6*var(--h))}
+.dial-cap{font-size:calc(13*var(--h));font-weight:800;color:#555;margin-top:calc(4*var(--h))}
+.slide-num{display:inline-flex;height:1em;line-height:1;overflow:hidden}
+.sn-col{display:inline-block;height:1em;overflow:hidden}
+.sn-strip{display:flex;flex-direction:column}
+.sn-strip span{height:1em;line-height:1;text-align:center}
+
+.spark-layer{position:fixed;inset:0;width:100%;height:100%;z-index:60;pointer-events:none}
+
+/* 모바일 세로: 면이 위, 무대가 아래 (390×844 기준) */
+@media (max-width:768px){
+  :root{--s:min(calc(100vw/390),calc(100svh/844));--bx:24}
+  .world{background-size:calc(60*var(--s)) calc(60*var(--s));background-position:0 0,calc(30*var(--s)) calc(30*var(--s))}
+  .floor{height:calc(470*var(--s));transform:perspective(calc(520*var(--s))) rotateX(58deg);background-size:auto,calc(84*var(--s)) calc(84*var(--s))}
+  .stage{left:0;top:0;width:100vw;height:100svh;transform:none}
+  .panel,.panel-cast{left:0;top:0;width:100%;height:calc(648*var(--s) + 120px);clip-path:polygon(0 0,100% 0,100% calc(90% - 108px),0 calc(100% - 120px))}
+  .panel{background-size:100% calc(100% - 120px)}
+  .panel-cast{translate:calc(16*var(--s)) calc(16*var(--s))}
+  .tone{left:0;top:calc(320*var(--s));width:100%;height:calc(290*var(--s));background-size:calc(12*var(--s)) calc(12*var(--s));background-image:radial-gradient(circle,#2e2e2e 0 calc(2.4*var(--s)),transparent calc(2.7*var(--s)))}
+  .brand{top:calc(24*var(--s));gap:calc(8*var(--s))}
+  .brand-name{font-size:calc(22*var(--s));text-shadow:0 calc(2*var(--s)) 0 var(--k4)}
+  .brand-rule{width:2px;height:calc(14*var(--s))}
+  .brand-role{font-size:max(11px,calc(11.5*var(--s)))}
+  .bigidx{display:none}
+  .menu{top:calc(76*var(--s));translate:none;gap:calc(12*var(--s))}
+  .mi{height:calc(74*var(--s));padding:calc(4*var(--s)) calc(22*var(--s)) 0;font-size:calc(46*var(--s))}
+  .mi-label{text-shadow:0 calc(3*var(--s)) 0 var(--k3),0 calc(6*var(--s)) 0 var(--k3)}
+  .mi.on .mi-label{text-shadow:0 calc(3*var(--s)) 0 #d2d2d2}
+  .band{border-radius:calc(18*var(--s));box-shadow:0 calc(5*var(--s)) 0 var(--side),calc(6*var(--s)) calc(10*var(--s)) 0 var(--drop)}
+  .band::before{inset:calc(6*var(--s));border-width:3px;border-radius:calc(12*var(--s))}
+  .tiles{top:calc(342*var(--s));bottom:auto;gap:calc(12*var(--s))}
+  .tile{width:calc(165*var(--s));height:calc(86*var(--s));gap:calc(9*var(--s));padding-top:calc(3*var(--s));font-size:max(11px,calc(12.5*var(--s)));border-radius:calc(16*var(--s))}
+  .tile svg{width:calc(32*var(--s));height:calc(32*var(--s))}
+  .play-wrap{left:calc(24*var(--s));top:calc(442*var(--s));bottom:auto;width:calc(342*var(--s));height:calc(74*var(--s))}
+  .play{font-size:calc(30*var(--s));gap:calc(12*var(--s));border-radius:calc(20*var(--s));rotate:-2deg;box-shadow:0 calc(6*var(--s)) 0 var(--side),calc(7*var(--s)) calc(12*var(--s)) 0 var(--drop)}
+  .play::before{inset:calc(6*var(--s));border-width:3px;border-radius:calc(14*var(--s))}
+  .play i{border-left-width:calc(17*var(--s));border-top-width:calc(11*var(--s));border-bottom-width:calc(11*var(--s));margin-top:calc(-3*var(--s))}
+  .contact{left:calc(var(--bx)*var(--s));right:auto;top:calc(534*var(--s));bottom:auto;gap:calc(8*var(--s))}
+  .chip{height:calc(32*var(--s));padding:0 calc(11*var(--s));gap:calc(6*var(--s));font-size:max(11px,calc(11*var(--s)));border-width:2px;box-shadow:calc(3*var(--s)) calc(4*var(--s)) 0 #000}
+  .chip svg{width:calc(13*var(--s));height:calc(13*var(--s))}
+  .keys{display:none}
+  .char{--c:calc(.42*var(--s));left:calc(100vw - 84*var(--s));top:calc(100svh - 34*var(--s))}
+  .tut{left:calc(136*var(--s));top:calc(130*var(--s));width:calc(230*var(--s))}
+  .tut-title{font-size:calc(50*var(--s));margin-bottom:calc(20*var(--s));text-shadow:0 calc(2*var(--s)) 0 #9a9a9a,0 calc(4*var(--s)) 0 #6a6a6a,0 calc(6*var(--s)) 0 #3a3a3a}
+  .tut-frame{height:calc(340*var(--s));border-width:calc(3*var(--s));border-radius:calc(20*var(--s))}
+  .tut-tag{font-size:calc(11*var(--s))}
+  .hud .beats{top:calc(104*var(--h))}
+}
+
+/* v3.5 메뉴 버튼 표시: 모든 항목 오른쪽 화살표(테두리 칸은 '설정 목록' 같아서 뺌). 고른 항목은 화살표가 검게 한 칸 나감 */
+.mi-go{position:relative;z-index:1;flex:none;width:calc(22*var(--s));height:calc(22*var(--s));margin:0 0 calc(4*var(--s)) calc(10*var(--s));
+  border-top:max(3px,calc(6*var(--s))) solid #5e5e5e;border-right:max(3px,calc(6*var(--s))) solid #5e5e5e;rotate:45deg;translate:calc(-6*var(--s)) 0;
+  transition:translate 220ms cubic-bezier(.34,1.56,.64,1),border-color 120ms}
+.mi.on .mi-go{border-color:var(--ink);translate:calc(4*var(--s)) 0}
+/* 플레이 버튼: 큰 '플레이' + 아래 작은 설명 */
+.play{flex-direction:column;gap:calc(8*var(--s))}
+.play-main{display:flex;align-items:center;gap:calc(16*var(--s))}
+.play-sub{position:relative;font-family:var(--body);font-weight:800;font-size:max(12px,calc(19*var(--s)));letter-spacing:.08em;color:#333;line-height:1}
+
+@media (max-width:768px){
+  .mi-go{width:calc(14*var(--s));height:calc(14*var(--s));border-top-width:3px;border-right-width:3px;margin:0 0 calc(2*var(--s)) calc(12*var(--s));translate:calc(-3*var(--s)) 0}
+  .mi.on .mi-go{translate:calc(2*var(--s)) 0}
+  .play{gap:calc(4*var(--s))} .play-main{gap:calc(12*var(--s))}
+  .play-sub{font-size:max(11px,calc(12*var(--s)))}
+  .chip-ic{width:calc(13*var(--s));height:calc(13*var(--s))}
+}
+/* v3.4 손질: 누르는 요소에서 글자 선택·모바일 파란 탭 깜빡임 방지(리듬 입력 연타 대비), 선택 색도 흑백 */
+.mi,.tile,.play,.chip,.back,.dial{-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+::selection{background:#3a3a3a;color:#fff}
+.tile:focus-visible{outline:3px solid var(--paper);outline-offset:5px}
+/* 짧은 화면(브라우저 확대 150% 등): 글자 최소 크기 때문에 타일 이름이 넘치면 그때만 두 줄로 */
+@media (min-width:769px) and (max-height:620px){
+  .tile{gap:calc(9*var(--s))} .tile svg{width:calc(44*var(--s));height:calc(44*var(--s))}
+  .tile-label{white-space:normal;text-wrap:balance;text-align:center;line-height:1.15;padding:0 calc(10*var(--s))}
+}
+/* v3.5 누름 깊이: 누르는 동안 띠·플레이의 두께 그림자가 줄어 '바닥까지 눌린' 느낌 (위치 이동은 Motion whileTap) */
+.band,.play{transition:box-shadow 90ms cubic-bezier(.23,1,.32,1)}
+.mi:active .band{box-shadow:0 calc(2*var(--s)) 0 var(--side),calc(4*var(--s)) calc(6*var(--s)) 0 var(--drop)}
+.play:active{box-shadow:0 calc(2*var(--s)) 0 var(--side),calc(4*var(--s)) calc(6*var(--s)) 0 var(--drop)}
+.chip-ic{position:relative;display:inline-grid;place-items:center;width:calc(16*var(--s));height:calc(16*var(--s));flex:none}
+.chip-ic svg{position:absolute;inset:0;width:100%;height:100%}
+/* 메뉴 키보드 포커스: 사각 외곽선 대신 띠 모양을 따라가는 외곽선만 */
+.mi:focus-visible{outline:none}

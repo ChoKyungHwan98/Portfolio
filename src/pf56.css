@@ -1,0 +1,43 @@
+/* ===== v5.6 ===== */
+/* 영상 이름표(영상이 둘 이상일 때만) */
+.dm2 .sv{position:relative}
+.sv-lab{position:absolute;z-index:3;top:10px;left:10px;padding:5px 11px;border-radius:999px;background:var(--ink);color:#fff;font:800 13px/1 var(--body);letter-spacing:.01em;pointer-events:none}
+/* 세로 큰 영상 + 옆 칸(가로 영상 타일 위 · 기획서 아래) */
+.dm2.por.more .dm2-in{--rw:min(calc(100cqw - var(--vw) - 20px),calc(100cqh * .98),640px);--ph:calc(100cqh - var(--rw) * 9 / 16 - 14px);
+  --sw:min(calc((var(--ph) - 40px) * 1191 / 1684),calc(var(--rw) - 290px));grid-template-columns:var(--vw) var(--rw)}
+.dm2-side{display:flex;flex-direction:column;gap:14px;height:100cqh;min-width:0}
+.dm2.por .dm2-side .sv.tile, .dm2.por .dm2-side .sv.tile .sv-face{width:var(--rw);aspect-ratio:16/9}
+.dm2-side .de2{flex:1 1 0;min-height:0;height:auto}
+.dm2-side .de2.a4{padding:14px 18px 14px 14px}
+.dm2-side .de2.a4 .de2-stack{width:var(--sw);margin:6px 10px 0 0}
+.dm2-side .de2.a4 .de2-info{flex:1;width:auto}
+/* 도구 화면(영상 대신) */
+.dm2.app .dm2-in{height:100%;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:minmax(0,1fr) auto;justify-content:stretch;align-content:stretch;gap:12px 16px}
+.dm2.app .as{display:contents}
+.as-frame{grid-column:1 / -1;display:flex;flex-direction:column;min-height:0;border:3px solid var(--ink);border-radius:16px;background:#fff;box-shadow:6px 6px 0 var(--ink);overflow:hidden}
+.as-bar{flex:none;display:flex;align-items:center;gap:7px;height:30px;padding:0 12px;background:var(--ink);color:#fff}
+.as-bar i{width:10px;height:10px;border-radius:50%;background:#5a5a5a}
+.as-bar span{margin-left:8px;font:700 13px/1 var(--body)}
+.as-bar em{margin-left:auto;padding:4px 9px;border-radius:999px;background:#FFD400;color:var(--ink);font:800 11px/1 var(--body);font-style:normal}
+.as-view{position:relative;flex:1;min-height:0;overflow:hidden;background:#f5f6f8}
+.as-if{position:absolute;left:0;top:0;border:0;transform-origin:0 0;background:#fff}
+.as-cap{display:flex;align-items:center;gap:14px;min-width:0}
+.as-cap p{margin:0;min-width:0;font:500 14px/1.45 var(--body);color:#444}
+.as-cap p b{margin-right:8px;color:var(--ink);font-weight:800}
+.as-big{flex:none;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px;border:3px solid var(--ink);border-radius:12px;background:#fff;color:var(--ink);font:800 15px/1 var(--body);cursor:pointer;box-shadow:3px 3px 0 var(--ink);transition:translate 140ms ease,box-shadow 140ms ease}
+@media (hover:hover) and (pointer:fine){ .as-big:hover{background:#FFD400;translate:-1px -1px;box-shadow:4px 4px 0 var(--ink)} }
+.as-big:active{translate:2px 2px;box-shadow:1px 1px 0 var(--ink)}
+.as-big:focus-visible{outline:3px solid #FFD400;outline-offset:3px}
+.dm2.app .de2.none{padding:8px 14px;gap:10px;align-self:center}
+.dm2.app .de2.none .de2-ic{transform:scale(.8)}
+.dm2.app .de2.none .de2-tx b{font-size:15px}
+.dm2.app .de2.none .de-s{font-size:13px}
+.ov-app .as-full{width:min(96vw,1680px);height:min(90vh,1050px);border:3px solid #fff;border-radius:12px;background:#fff}
+.reduce .as-big{transition:none}
+@media (max-width:768px){ .dm2.app .dm2-in{display:flex;flex-direction:column} .as-frame{height:70vh} .dm2-side{height:auto} }
+/* v5.7 AI 리뷰: 기획서 칸 없음 → 설명 줄이 폭 전체(글 왼쪽 · 크게 보기 오른쪽) */
+.dm2.app .as-cap{grid-column:1 / -1;justify-content:space-between;gap:24px;padding:0 2px}
+.dm2.app .as-cap p{font-size:15px}
+/* v5.9 포트폴리오도 세로 스크롤 허용 → 낮은 창(≈600–660px)에서 억지로 눌려 있던 세로 영상 · 도구 화면에 숨 쉴 높이(최소 540px).
+   가로 16:9 영상은 폭이 먼저 막혀서 높이를 늘려도 커지지 않으므로 그대로(빈 칸만 생김) */
+.pf-detail .wd-main.dm2.por,.pf-detail .wd-main.dm2.app{min-height:540px}

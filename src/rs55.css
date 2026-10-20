@@ -1,0 +1,66 @@
+/* ===== v5.5 이력서: 한 장 · 두 단 · 얇은 선 ===== */
+.rs .sh-head{padding:8px 20px 7px;margin-bottom:12px;border-radius:16px;box-shadow:5px 5px 0 var(--ink)}
+.rs .sh-title{font-size:32px}
+.rs-sheet{display:grid;grid-template-columns:minmax(290px,340px) minmax(0,1fr);background:#fff;border:3px solid var(--ink);border-radius:18px;box-shadow:5px 5px 0 #cfcfcf;overflow:hidden}
+.rs-colL{display:flex;flex-direction:column;gap:14px;padding:18px 20px;background:#f7f7f7;border-right:2px solid #e2e2e2}
+.rs-colR{display:flex;flex-direction:column;gap:16px;padding:16px 22px 18px;min-width:0}
+.rs-prof{display:flex;gap:14px;align-items:flex-end}
+.rs-photo{flex:none;width:92px;height:auto;aspect-ratio:2/3;object-fit:cover;border:2px solid var(--ink);border-radius:10px;background:#ddd}
+.rs-who{min-width:0;padding-bottom:4px}
+.rs-name{margin:0 0 6px;font:400 30px/1 var(--display);color:var(--ink)}
+.rs-role{margin:0;font:800 14px/1.35 var(--body);color:#333;word-break:keep-all}
+.rs-sum p{margin:0 0 4px;font:500 14px/1.6 var(--body);color:#222;word-break:keep-all}
+.rs-sum b,.rs-x2 b,.rs-d b{font-weight:800;background:linear-gradient(transparent 62%,#FFD400 62%)}
+.rs-contact{list-style:none;margin:0;padding:10px 0 0;border-top:2px solid #e2e2e2;display:flex;flex-direction:column;gap:7px}
+.rs-contact li{display:flex;align-items:center;gap:9px;font:700 13.5px/1.3 var(--body);color:#111;min-width:0}
+.rs-contact a{color:inherit;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere} .rs-contact a:hover{background:#FFD400}
+.rs-ic{flex:none;width:17px;height:17px;fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.rs-blk{min-width:0}
+.rs-colL .rs-blk{padding-top:12px;border-top:2px solid #e2e2e2}
+.rs-h{display:flex;align-items:center;gap:8px;margin:0 0 9px;font:800 15.5px/1 var(--body);color:var(--ink)}
+.rs-h .rs-ic{width:18px;height:18px;padding:3px;box-sizing:content-box;border-radius:6px;background:#FFD400;stroke-width:2.4}
+.rs-h small{font:800 12px/1 var(--body);color:#777}
+.rs-certs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.rs-certs li{display:grid;grid-template-columns:1fr auto 40px;align-items:baseline;gap:8px;font:700 13.5px/1.3 var(--body)}
+.rs-certs b{font-weight:800} .rs-certs small{font:700 12px/1 var(--body);color:#777;text-align:right}
+.rs-mil{margin:0;display:flex;flex-direction:column;gap:3px;font:800 13.5px/1.35 var(--body);color:#111} .rs-mil small{font:700 12.5px/1.3 var(--body);color:#666}
+.rs-tg{display:flex;flex-direction:column;gap:5px;margin-bottom:8px} .rs-tg:last-child{margin-bottom:0}
+.rs-tg > small{font:800 11.5px/1 var(--body);color:#777;letter-spacing:.04em}
+.rs-tools{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.rs-tools li{display:flex;align-items:center;gap:6px;min-width:0;height:30px;padding:0 7px;border:1.5px solid #dcdcdc;border-radius:8px;background:#fff;font:700 12px/1 var(--body);color:#222;cursor:default}
+.rs-tools li span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rs-tools img{flex:none;width:17px;height:17px;filter:grayscale(1) contrast(1.15)}
+/* 프로젝트 경험: 같은 높이의 두 줄 */
+.rs-xp{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.rs-x{display:flex;flex-direction:column;justify-content:center;gap:6px;min-height:62px;padding:9px 0;border-top:1.5px solid #e6e6e6}
+.rs-x:first-child{border-top:0;padding-top:2px}
+.rs-x.rep + .rs-x:not(.rep){border-top:2.5px solid var(--ink)}
+.rs-x1{display:flex;align-items:baseline;gap:12px;min-width:0}
+.rs-x1 b{flex:1;min-width:0;font:800 15.5px/1.3 var(--body);color:#111;word-break:keep-all}
+.rs-meta{flex:none;display:inline-flex;gap:6px;font:700 12.5px/1.3 var(--body);color:#666;white-space:nowrap} .rs-meta i{font-style:normal;color:#aaa}
+.rs-x2{display:flex;align-items:center;gap:14px;font:600 13.5px/1.45 var(--body);color:#333;word-break:keep-all} .rs-x2 > span{flex:1;min-width:0}
+.rs-rep{display:inline-block;margin-right:7px;padding:3px 6px;border-radius:5px;background:#FFD400;box-shadow:inset 0 0 0 1.5px var(--ink);font:800 11px/1 var(--body);font-style:normal;color:var(--ink);vertical-align:2px}
+.rs-go{flex:none;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border:2px solid var(--ink);border-radius:8px;background:#fff;color:var(--ink);text-decoration:none;font:800 12.5px/1 var(--body);transition:background 120ms,color 120ms}
+.rs-go i{font-style:normal;transition:translate 150ms cubic-bezier(.34,1.56,.64,1)}
+.rs-go:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+@media (hover:hover) and (pointer:fine){ .rs-go:hover{background:var(--ink);color:#fff} .rs-go:hover i{translate:3px 0;color:#FFD400} }
+/* 학력: 시간 줄 */
+.rs-tl{list-style:none;margin:0;padding:0 0 0 16px;display:flex;flex-direction:column;gap:10px;border-left:2px solid #e2e2e2;margin-left:6px}
+.rs-tl li{position:relative;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.rs-tl li::before{content:"";position:absolute;left:-23px;top:5px;width:8px;height:8px;border-radius:50%;background:#FFD400;box-shadow:0 0 0 2px var(--ink)}
+.rs-tl b{font:800 14.5px/1.3 var(--body);color:#111} .rs-tl .rs-d{flex-basis:100%;font:600 13px/1.45 var(--body);color:#444}
+@media (max-width:900px){ .rs-sheet{grid-template-columns:1fr} .rs-colL{border-right:0;border-bottom:2px solid #e2e2e2} }
+.rs-sheet .rs-h::before{display:none}
+.rs-sheet .rs-tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+.rs-sheet .rs-tools li{flex-direction:row;align-items:center;gap:7px;height:32px;padding:0 9px;border:1.5px solid #dcdcdc;border-radius:8px;background:#fafafa}
+.rs-sheet .rs-tools li span{font:700 12.5px/1 var(--body);color:#222}
+.rs-sheet .rs-tg{display:grid;grid-template-columns:86px 1fr;align-items:center;gap:10px;margin-bottom:6px}
+.rs-colR .rs-blk + .rs-blk{padding-top:14px;border-top:2px solid #e2e2e2}
+.sheet-in:has(> * > .rs),.sheet-in:has(.rs){padding-top:22px;padding-bottom:26px}
+.rs-sheet .rs-tg{display:block;margin:0}
+.rs-sheet .rs-tools{grid-template-columns:repeat(auto-fill,minmax(112px,1fr))}
+.rs-x{min-height:54px;padding:7px 0;gap:4px}
+.rs-go{height:28px}
+.rs-colR{gap:12px;padding-top:14px}
+.rs-colR .rs-blk + .rs-blk{padding-top:12px}
+.rs-tl{gap:8px}

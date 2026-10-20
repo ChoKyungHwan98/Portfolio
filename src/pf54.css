@@ -1,0 +1,32 @@
+/* ===== v5.4 상세 단추 체계: 돌아가기 = 머리 판 왼쪽 네모 하나(판과 같은 높이 · 같은 3px 테두리 · 같은 그림자)
+   아래 줄 = 이전 | 다음 (같은 꼴 · 같은 무게). 본문 = 영상 + 기획서 카드, 위아래 끝이 같음 ===== */
+.wd-up{flex:none;width:86px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:3px solid var(--ink);border-radius:18px;background:#fff;color:var(--ink);
+  text-decoration:none;box-shadow:6px 6px 0 var(--ink);transition:background 120ms,color 120ms,translate 120ms,box-shadow 120ms}
+.wd-up i{font-style:normal;font:800 24px/1 var(--body);transition:translate 150ms cubic-bezier(.34,1.56,.64,1)}
+.wd-up b{font:800 14px/1 var(--body)}
+.wd-up:active{translate:3px 3px;box-shadow:3px 3px 0 var(--ink)}
+.wd-up:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+@media (hover:hover) and (pointer:fine){ .wd-up:hover{background:var(--ink);color:#fff} .wd-up:hover i{translate:-3px 0;color:#FFD400} }
+.pf-detail .wd-top{align-items:stretch}
+/* 아래 줄 */
+.pf-detail .wd-bar{gap:16px;padding-top:8px}
+.wd-nx{display:inline-flex;align-items:center;gap:10px;min-width:0;max-width:46%;padding:6px 4px;color:var(--ink);text-decoration:none;border-radius:8px}
+.wd-nx small{flex:none;font:800 13px/1 var(--body);color:#555}
+.wd-nx b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:400 21px/1.15 var(--display);background:linear-gradient(#FFD400,#FFD400) 0 88%/0 40% no-repeat;transition:background-size 180ms cubic-bezier(.23,1,.32,1)}
+.wd-nx i{flex:none;font-style:normal;font:800 18px/1 var(--body);transition:translate 150ms cubic-bezier(.34,1.56,.64,1)}
+.wd-nx:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+@media (hover:hover) and (pointer:fine){ .wd-nx:hover b{background-size:100% 40%} .wd-nx.next:hover i{translate:3px 0} .wd-nx.prev:hover i{translate:-3px 0} }
+/* 본문: 영상과 기획서 카드가 같은 줄 높이(위아래 끝 맞춤) */
+.pf-detail .wd-main.dm{align-items:stretch}
+.dm .de,.dm .de.none{align-self:stretch;height:auto}
+.dm .de .de-pages{margin-top:auto}
+.de.none{background:#f6f6f6;border-style:dashed}
+.de.none .de-t{font:400 25px/1.15 var(--display);color:#555}
+.de.none .de-pages{opacity:.45;filter:grayscale(1)}
+.de-read.off{justify-content:center;background:#ececec;color:#777;border-style:dashed;box-shadow:none;cursor:default}
+.sv-empty{display:grid;place-items:center;background:#f6f6f6!important;border:3px dashed var(--ink)!important;cursor:default!important}
+.sv-empty b{font:800 17px/1 var(--body);color:#555}
+@media (min-width:769px) and (max-height:700px){ .wd-up{width:76px} .wd-up i{font-size:21px} .de.none .de-t{font-size:22px} }
+/* v5.4 이력서: 대표(1인) 프로젝트 표시 */
+.rs-rep{display:inline-block;margin-right:8px;padding:3px 7px;border-radius:6px;background:#FFD400;box-shadow:inset 0 0 0 2px var(--ink);font:800 11.5px/1 var(--body);font-style:normal;color:var(--ink);vertical-align:2px}
+.rs-row.rep + .rs-row:not(.rep){border-top:3px solid var(--ink);margin-top:4px}
