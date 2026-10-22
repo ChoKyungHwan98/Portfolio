@@ -1,0 +1,39 @@
+/* Cover-letter concept: familiar site heading, a quiet index, one readable document. */
+.sheet-in:has(.clp-layout){max-width:1320px}
+.clp-layout{font-family:var(--body);color:#111;letter-spacing:-.025em;padding-bottom:10px}
+.clp-layout *{box-sizing:border-box}.clp-layout h1,.clp-layout h2,.clp-layout p{margin:0}.clp-layout a{color:inherit;text-decoration:none}
+.clp-page-head{display:flex;align-items:center;gap:20px;margin-bottom:26px}
+.clp-page-head h1{font:400 32px/1.2 var(--display)!important;white-space:nowrap;text-shadow:none!important}
+.clp-page-head h1>span{position:relative;z-index:0}.clp-page-head h1>span:after{content:"";position:absolute;left:-3px;right:-3px;height:8px;bottom:0;z-index:-1;background:#ffd400;border-radius:2px}
+.clp-page-head>i{height:2px;background:#111;flex:1}
+.clp-grid{display:grid;grid-template-columns:144px minmax(0,1fr);gap:24px;align-items:start}
+.clp-toc{position:sticky;top:26px;display:flex;flex-direction:column;gap:5px;padding-top:5px}
+.clp-toc-title{font-size:12px;color:#777;font-weight:700;margin:0 12px 10px}
+.clp-toc a{display:block;padding:11px 12px;border-radius:6px;font-size:14px;line-height:1.4;font-weight:700;color:#666;transition:background .15s,color .15s}
+.clp-toc a:hover{background:#fff;color:#111}.clp-toc a.is-active{background:#ffd400;color:#111}
+.clp-toc a:focus-visible{outline:2px solid #111;outline-offset:2px}
+.clp-paper{min-width:0;background:#fff;border:2px solid #111;border-radius:15px;box-shadow:4px 5px #111;padding:38px 40px 44px}
+.clp-section{max-width:710px;margin:0 auto;scroll-margin-top:26px}
+.clp-section+.clp-section{margin-top:50px;padding-top:46px;border-top:1px solid #d8d8d8}
+.clp-section-label{display:block;font-size:13px;line-height:1.5;font-weight:800;color:#666;margin-bottom:13px}
+.clp-section h2{font:400 29px/1.42 var(--display);letter-spacing:-.035em;word-break:keep-all;overflow-wrap:anywhere;outline:none}
+.clp-section h2 strong{font-weight:400;background:linear-gradient(transparent 70%,#ffd400 70% 93%,transparent 93%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.clp-question{font-size:12px;line-height:1.7;color:#888;margin:16px 0 26px!important;word-break:keep-all}
+.clp-prose{font-size:17px;font-weight:400;line-height:1.9;color:#333;word-break:keep-all;overflow-wrap:anywhere}
+.clp-prose p+p,.clp-prose blockquote+p{margin-top:17px}
+.clp-prose strong{font-weight:800;color:#111}
+.clp-prose blockquote{margin:23px 0;padding:3px 0 3px 17px;border-left:3px solid #ffd400;font-size:18px;font-weight:700;line-height:1.75;color:#111}
+@media(min-width:1600px){.clp-page-head h1{font-size:38px!important}.clp-page-head{margin-bottom:30px}.clp-grid{grid-template-columns:172px minmax(0,1fr);gap:30px}.clp-toc a{font-size:15px}.clp-paper{padding:48px 58px 54px}.clp-section h2{font-size:34px}.clp-prose{font-size:18px;line-height:1.95}.clp-question{font-size:13px}.clp-section-label{font-size:14px}.clp-section+.clp-section{margin-top:58px;padding-top:52px}}
+@media(max-width:1000px){.clp-grid{grid-template-columns:116px minmax(0,1fr);gap:18px}.clp-toc a{font-size:13px;padding:10px}.clp-paper{padding:30px}.clp-section h2{font-size:26px}.clp-prose{font-size:16px}}
+@media(max-width:700px){.clp-page-head{gap:14px;margin-bottom:12px}.clp-page-head h1{font-size:28px!important}.clp-grid{display:block}.clp-toc{flex-direction:row;flex-wrap:wrap;gap:4px;top:0;padding:10px 0 13px;background:#f0f0f0;z-index:2;margin-bottom:10px}.clp-toc-title{display:none}.clp-toc a{font-size:12px;padding:8px;border-radius:5px}.clp-paper{padding:26px 22px 30px;border-radius:12px;box-shadow:3px 4px #111}.clp-section-label{font-size:12px;margin-bottom:11px}.clp-section h2{font-size:24px;line-height:1.5}.clp-question{font-size:11px;margin:13px 0 23px!important;line-height:1.8}.clp-prose{font-size:15px;line-height:1.95}.clp-prose p+p{margin-top:17px}.clp-prose blockquote{font-size:16px;padding-left:12px}.clp-section{scroll-margin-top:66px}.clp-section+.clp-section{margin-top:36px;padding-top:32px}}
+@media(prefers-reduced-motion:reduce){.clp-layout *{transition:none!important}}
+/* v2: readable question context and restrained emphasis within the prose. */
+.clp-question{font-size:13px;color:#666}
+.clp-toc-title{color:#666}
+.clp-prose strong{font-weight:700}
+@media(min-width:1600px){.clp-question{font-size:14px}}
+@media(max-width:700px){.clp-question{font-size:12px;color:#666}}
+
+/* The portfolio presents the stories without application-form prompts. */
+.clp-section>header{margin-bottom:26px}
+@media(max-width:700px){.clp-section>header{margin-bottom:23px}}
