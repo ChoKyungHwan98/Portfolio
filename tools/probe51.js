@@ -1,5 +1,0 @@
-const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
-(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});const p=await b.newPage();await p.setViewport({width:1280,height:600});
-await p.goto('http://localhost:8766/',{waitUntil:'networkidle0'});await sl(2000);
-await p.evaluate(()=>{location.hash='#/media?ch=game'; window.__log=[]; const t0=performance.now(); const f=()=>{const q=s=>document.querySelector(s); if(q('.rm-cam')) __log.push([Math.round(performance.now()-t0), getComputedStyle(q('.rm-cam')).transform.slice(0,60), getComputedStyle(q('.mr-pic')).transform, getComputedStyle(q('.mr-snow')).opacity, getComputedStyle(q('.mr-scr')).backgroundColor, getComputedStyle(q('.mr-mon')).opacity]); if(performance.now()-t0<1300) requestAnimationFrame(f)}; f();});
-await sl(1500);const l=await p.evaluate(()=>__log);console.log(l.filter((_,i)=>i%6==0).map(x=>JSON.stringify(x)).join('\n'));await b.close();})();

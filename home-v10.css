@@ -1,0 +1,39 @@
+/* v10 홈 배경 (Claude): 하얀 모눈 → 빵집 무대처럼. 입체감(원근 바닥)은 그대로 두고 무늬만 바꿈.
+   벽 = 밤 반죽 장면과 같은 세로 줄무늬 + 위는 밝고 바닥 쪽은 살짝 어둡게. 바닥 = 회색 마루 판자 + 이음새 */
+.world{--wall:#efefed;background-color:#efefed!important;
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 38%,rgba(0,0,0,0) 62%,rgba(0,0,0,.07) 100%),
+    repeating-linear-gradient(90deg,#f1f1ef 0 calc(32*var(--u)),#e6e6e4 calc(32*var(--u)) calc(64*var(--u)))!important;
+  background-size:auto!important;background-position:0 0!important}
+.floor{background:
+    linear-gradient(0deg,rgba(0,0,0,.06) 0%,transparent 30%,transparent 45%,var(--wall) 100%),
+    repeating-linear-gradient(0deg,#e2e2e0 0 calc(84*var(--u)),#c9c9c7 calc(84*var(--u)) calc(90*var(--u)),#d9d9d7 calc(90*var(--u)) calc(174*var(--u)),#c9c9c7 calc(174*var(--u)) calc(180*var(--u)))!important;
+  background-size:auto!important}
+
+/* v10.1: 홈 캐릭터 제거 (사용자 요청 2026-10-22). 무대 캐릭터와 발밑 그림자를 통째로 숨김 */
+.char-wrap{display:none!important}
+
+/* v11 (2026-10-22 제출용): 게임은 주말에 완성 → 홈 플레이 버튼 숨김. 대표 이미지는 판 그림 칸을 꽉 채움 */
+.play-wrap{display:none!important}
+.pst-art .pst-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.scr-keys:empty{display:none}
+/* v11 이력서 미리보기 칸 */
+.pv-grid2{align-items:stretch}
+.pv-cell2{display:flex;flex-direction:column;gap:calc(8*var(--u));padding:calc(14*var(--u)) calc(16*var(--u));border:calc(3*var(--u)) solid var(--ink);border-radius:calc(12*var(--u));background:#fafafa;min-width:0}
+.pv-cell2>small{font-size:calc(15*var(--u));font-weight:800;color:#777;letter-spacing:-.01em}
+.pv-cell2>b{font-family:var(--display);font-weight:400;font-size:calc(19*var(--u));line-height:1.15;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-chips{display:flex;flex-wrap:wrap;gap:calc(6*var(--u))}
+.pv-chips em{font-style:normal;font-weight:800;font-size:calc(15*var(--u));padding:calc(5*var(--u)) calc(9*var(--u)) calc(3*var(--u));border-radius:calc(8*var(--u));background:var(--ink);color:#fff}
+.pv-chips em:first-child{background:#FFD400;color:var(--ink);box-shadow:inset 0 0 0 calc(2*var(--u)) var(--ink)}
+.pv-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(8*var(--u)) calc(6*var(--u))}
+.pv-tool{display:flex;flex-direction:column;align-items:center;gap:calc(3*var(--u));font-size:calc(12*var(--u));font-weight:700;color:#555}
+.pv-tool img{width:calc(30*var(--u));height:calc(30*var(--u));object-fit:contain}
+.pv-tool img{filter:grayscale(1) contrast(1.2)}
+.pv-grid2{grid-template-columns:1fr 1.5fr}
+.pv-grid2 .pv-tools{grid-template-columns:repeat(6,1fr)}
+.pv-grid2 .pv-cell2{padding:calc(18*var(--u)) calc(20*var(--u));gap:calc(12*var(--u))}
+.pv-grid2 .pv-cell2>small{font-size:calc(18*var(--u))}
+.pv-grid2 .pv-chips{gap:calc(8*var(--u))}
+.pv-grid2 .pv-chips em{font-size:calc(20*var(--u));padding:calc(7*var(--u)) calc(12*var(--u)) calc(5*var(--u))}
+.pv-grid2 .pv-tool img{width:calc(42*var(--u));height:calc(42*var(--u))}
+.pv-grid2 .pv-tool{font-size:calc(14*var(--u))}

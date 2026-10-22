@@ -1,0 +1,16 @@
+/* Text-only resume and a matching cover-letter preview. */
+.pv-card.pv-card-textonly .pv-simple-top{min-height:calc(200*var(--u));gap:0}
+.pv-card.pv-card-textonly .pv-simple-role{white-space:nowrap}
+.pv-letter.pv-letter-simple{width:calc(700*var(--u));padding:calc(34*var(--u)) calc(38*var(--u));border-radius:calc(18*var(--u));rotate:1.2deg}
+.pv-cover-content{display:flex;flex-direction:column;width:100%;min-width:0}
+.pv-cover-title{display:block;align-self:flex-start;font:400 calc(52*var(--u))/1.2 var(--display);letter-spacing:-.025em;margin-bottom:calc(26*var(--u))}
+.pv-cover-paragraph{display:flex;flex-direction:column;gap:calc(10*var(--u))}
+.pv-cover-paragraph+.pv-cover-paragraph{margin-top:calc(22*var(--u))}
+.pv-cover-paragraph i{display:block;width:100%;height:calc(12*var(--u));border-radius:calc(6*var(--u));background:#e4e4e4}
+.pv-cover-paragraph:first-child i:last-child{width:82%}
+.pv-cover-paragraph:last-child i:last-child{width:62%}
+.pv-cover-sign{align-self:flex-end;font:800 calc(24*var(--u))/1.2 var(--body);margin-top:calc(24*var(--u));color:#555}
+/* v2: give the cover letter the same paper proportions as the resume. */
+.pv-letter.pv-letter-simple{min-height:calc(372*var(--u))}
+.pv-letter-simple .pv-cover-content{flex:1}
+.pv-cover-sign{margin-top:auto;padding-top:calc(24*var(--u))}

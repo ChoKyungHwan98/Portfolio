@@ -1,0 +1,16 @@
+/* Home resume preview: identity and a quiet document silhouette. */
+.pv-card.pv-card-simple{position:relative;width:calc(700*var(--u));padding:calc(34*var(--u)) calc(38*var(--u));gap:0;border-radius:calc(18*var(--u));overflow:hidden;rotate:-1.2deg}
+.pv-simple-content{width:100%}
+.pv-simple-top{display:flex;align-items:center;justify-content:space-between;gap:calc(34*var(--u))}
+.pv-simple-identity{flex:1;min-width:0}
+.pv-simple-name{display:block;font:400 calc(80*var(--u))/1.15 var(--display);letter-spacing:-.025em;text-shadow:0 calc(4*var(--u)) #ddd}
+.pv-simple-role{display:block;margin-top:calc(16*var(--u));font:700 calc(23*var(--u))/1.5 var(--body);color:#444;letter-spacing:-.025em}
+.pv-simple-photo{display:block;flex:none;width:calc(156*var(--u));height:calc(200*var(--u));object-fit:cover;border:calc(2*var(--u)) solid #ddd;border-radius:calc(8*var(--u))}
+.pv-simple-lines{display:flex;flex-direction:column;gap:calc(12*var(--u));margin-top:calc(26*var(--u));padding-top:calc(24*var(--u));border-top:calc(2*var(--u)) solid #111}
+.pv-simple-lines i{display:block;height:calc(12*var(--u));border-radius:calc(6*var(--u));background:#e4e4e4;width:100%}
+.pv-simple-lines i:nth-child(2){width:88%}.pv-simple-lines i:nth-child(3){width:63%}
+/* v2: fewer document marks and preserve the entire portrait. */
+.pv-simple-photo{object-fit:contain;background:#f0f0f0}
+.pv-simple-lines i:nth-child(2){width:70%}
+/* v3: keep the face legible while preserving the top of the portrait. */
+.pv-simple-photo{object-fit:cover;object-position:center top}

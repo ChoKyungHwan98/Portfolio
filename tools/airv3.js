@@ -1,9 +1,0 @@
-const puppeteer=require('puppeteer-core');const sl=ms=>new Promise(r=>setTimeout(r,ms));
-(async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});const p=await b.newPage();await p.setViewport({width:1366,height:800});
-const reqs=[];p.on('request',r=>{const u=r.url();if(!u.startsWith('http://localhost:8766/airv/'))reqs.push(r.method()+' '+u)});p.on('pageerror',e=>console.log('ERR',e.message));p.on('console',m=>{if(m.type()==='error')console.log('CERR',m.text())});
-const pops=[];b.on('targetcreated',t=>pops.push(t.url()));
-await p.goto('http://localhost:8766/airv/index.html?app_id=1623730',{waitUntil:'networkidle0'});await sl(1500);
-const btns=await p.evaluate(()=>[...document.querySelectorAll('button,a')].filter(e=>e.offsetParent).map(e=>(e.textContent||'').trim().slice(0,20)+'|'+(e.getAttribute('onclick')||e.getAttribute('href')||e.dataset.action||'')).slice(0,60));console.log(btns.join('\n'));
-for(const t of ['추가 수집','내보내기','검색','API Key','전체 프로젝트']){const h=await p.evaluateHandle(t=>[...document.querySelectorAll('button,a,.nav-item,.bottom-item')].find(e=>e.offsetParent&&e.textContent.includes(t)),t);const el=h.asElement();if(!el){console.log('no',t);continue}await el.click();await sl(700);
- console.log(t,'->',location=await p.evaluate(()=>location.pathname+location.search),'toast:',await p.evaluate(()=>document.querySelector('.ro-toast')?.textContent),'modal:',await p.evaluate(()=>[...document.querySelectorAll('[class*=modal],dialog')].filter(e=>e.offsetParent||e.open).map(e=>e.className||e.id).join()));await p.screenshot({path:'/workspace/rhythm/shots/airv_click_'+t.replace(/ /g,'')+'.png'});await p.keyboard.press('Escape');await sl(300);}
-console.log('reqs',reqs.join('\n'));console.log('pops',pops.join());await b.close();})();
