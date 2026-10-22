@@ -1,0 +1,2 @@
+/* Keep the fixed scene from becoming a programmatically scrollable ancestor. */
+.world{overflow:clip}
