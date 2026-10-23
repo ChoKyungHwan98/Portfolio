@@ -1,0 +1,8 @@
+/* Keep long document names and A4 pages inside the reader on narrow screens. */
+.rd-bar .dv-name{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.rd-bar .dv-nav,.rd-bar .dv-fit,.rd-bar .ov-x{flex-shrink:0;white-space:nowrap}
+.rd-bar .rd-of{white-space:nowrap}
+.rd-pane.a4.page .rd-pg{height:auto;width:min(100%,calc((100dvh - 104px) * .707244));max-width:100%}
+.rd-pane.a4.page .rd-pg img{width:100%;height:auto}
+@media(max-width:900px){.rd-bar .rd-of{display:none}.rd-bar{gap:8px;padding:0 10px}}
+@media(max-width:560px){.rd-bar .dv-name{font-size:15px}.rd-bar{gap:5px}.rd-bar .dv-fit{padding:2px 7px 0;font-size:12px}.rd-bar .dv-nav{gap:3px}.rd-bar .dv-n{min-width:44px}.rd{grid-template-columns:76px minmax(0,1fr)}.rd-t{width:54px}.rd-strip{padding-left:10px}.rd-pane{padding:14px 12px 32px}}
