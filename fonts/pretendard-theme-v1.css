@@ -1,0 +1,9 @@
+/* 본문 글꼴만 Pretendard로 바꾼다(2026-10-26). 제목·메뉴(--display)는 사이트 개성을 맡고 있어 Black Han Sans를 그대로 둔다. */
+:root{--body:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+
+/* 자기소개서 가독성: 한 줄을 약 38자로 줄이고, 글자색을 진하게, 자간을 덜 좁게. */
+.clp-section{max-width:640px}
+.clp-prose{color:#222;letter-spacing:-.01em}
+
+/* 자기소개서 본문 강조: 굵은 글씨만 있으면 문단 안에서 덩어리져 보인다. 제목과 같은 노란 형광펜 줄로 바꾼다. */
+.clp-prose strong{font-weight:600;color:#111;background:linear-gradient(transparent 62%,#ffd400 62% 92%,transparent 92%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
